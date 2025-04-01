@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Path, Body
+from fastapi import APIRouter, HTTPException, Path, Body, Depends
 from typing import Dict, Any
 
 from schemas.class_schema import Class, ClassCreate
 from services.firebase_service import FirebaseService
+from middleware.auth_middleware import verify_token
 
 # Create router
 router = APIRouter(prefix="/api/classes", tags=["classes"])
@@ -11,7 +12,7 @@ router = APIRouter(prefix="/api/classes", tags=["classes"])
 firebase_service = FirebaseService()
 
 @router.post("/", response_model=Dict[str, str])
-async def create_class(class_data: ClassCreate):
+async def create_class(class_data: ClassCreate, user_data: Dict = Depends(verify_token)):
     """Create a new class"""
     try:
         class_dict = class_data.dict()
@@ -21,7 +22,7 @@ async def create_class(class_data: ClassCreate):
         raise HTTPException(status_code=500, detail=f"Error creating class: {str(e)}")
 
 @router.get("/", response_model=Dict[str, Any])
-async def get_all_classes():
+async def get_all_classes(user_data: Dict = Depends(verify_token)):
     """Get all classes"""
     try:
         classes = firebase_service.get_all_classes()
@@ -30,7 +31,10 @@ async def get_all_classes():
         raise HTTPException(status_code=500, detail=f"Error retrieving classes: {str(e)}")
 
 @router.get("/{class_id}", response_model=Dict[str, Any])
-async def get_class(class_id: str = Path(..., description="The ID of the class to retrieve")):
+async def get_class(
+    class_id: str = Path(..., description="The ID of the class to retrieve"),
+    user_data: Dict = Depends(verify_token)
+):
     """Get a class by ID"""
     try:
         class_data = firebase_service.get_class(class_id)
@@ -45,7 +49,8 @@ async def get_class(class_id: str = Path(..., description="The ID of the class t
 @router.put("/{class_id}", response_model=Dict[str, str])
 async def update_class(
     class_data: ClassCreate,
-    class_id: str = Path(..., description="The ID of the class to update")
+    class_id: str = Path(..., description="The ID of the class to update"),
+    user_data: Dict = Depends(verify_token)
 ):
     """Update a class"""
     try:
@@ -62,7 +67,10 @@ async def update_class(
         raise HTTPException(status_code=500, detail=f"Error updating class: {str(e)}")
 
 @router.delete("/{class_id}", response_model=Dict[str, str])
-async def delete_class(class_id: str = Path(..., description="The ID of the class to delete")):
+async def delete_class(
+    class_id: str = Path(..., description="The ID of the class to delete"),
+    user_data: Dict = Depends(verify_token)
+):
     """Delete a class"""
     try:
         success = firebase_service.delete_class(class_id)
@@ -79,7 +87,8 @@ async def delete_class(class_id: str = Path(..., description="The ID of the clas
 @router.post("/{class_id}/enroll/{student_id}", response_model=Dict[str, str])
 async def enroll_student(
     class_id: str = Path(..., description="The ID of the class"),
-    student_id: str = Path(..., description="The ID of the student to enroll")
+    student_id: str = Path(..., description="The ID of the student to enroll"),
+    user_data: Dict = Depends(verify_token)
 ):
     """Enroll a student in a class"""
     try:

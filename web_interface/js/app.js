@@ -1,40 +1,12 @@
-// Fingerprint Attendance System - Frontend JavaScript
+// Main application JavaScript for the Fingerprint Attendance System
 
-// API Base URL - adjust this as needed
-const API_BASE_URL = '/api';
-
-// Wait for DOM to load
+// Initialize navigation and form handlers once the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize page navigation
     initNavigation();
-    
-    // Initialize form handlers
     initFormHandlers();
-    
-    // Load initial data
-    loadDashboardData();
-    loadClassesData();
-    loadStudentsData();
-    
-    // Add event listeners for report generation
-    document.getElementById('generate-report-btn').addEventListener('click', generateClassReport);
-    document.getElementById('generate-student-report-btn').addEventListener('click', generateStudentReport);
-    
-    // Add event listener for attendance filter
-    document.getElementById('attendance-filter-btn').addEventListener('click', loadAttendanceData);
-    
-    // Set today's date as default for date inputs
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('attendance-date').value = today;
-    document.getElementById('report-date').value = today;
-    
-    // Initialize datetime-local with current time
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('attendance-time').value = now.toISOString().slice(0, 16);
 });
 
-// Page navigation
+// Setup navigation between different sections
 function initNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -42,223 +14,285 @@ function initNavigation() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Remove active class from all links and pages
+            // Get the target page
+            const targetPage = this.getAttribute('data-page');
+            
+            // Remove active class from all links and sections
             navLinks.forEach(l => l.classList.remove('active'));
-            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
             
-            // Add active class to clicked link
+            // Add active class to clicked link and corresponding section
             this.classList.add('active');
-            
-            // Show the corresponding page
-            const pageName = this.getAttribute('data-page');
-            document.getElementById(`${pageName}-page`).classList.add('active');
+            document.getElementById(targetPage).classList.add('active');
         });
     });
 }
 
-// Initialize form handlers
+// Initialize all form handlers and UI interactions
 function initFormHandlers() {
-    // Add Schedule Button
-    document.getElementById('add-schedule-btn').addEventListener('click', addScheduleItem);
+    // Class form handlers
+    document.getElementById('add-class-btn')?.addEventListener('click', function() {
+        document.getElementById('class-form-container').style.display = 'block';
+        document.getElementById('class-form').reset();
+        document.getElementById('class-id').value = '';
+        document.getElementById('schedules-container').innerHTML = '';
+        addScheduleItem(); // Add at least one schedule item
+    });
     
-    // Save Class Button
-    document.getElementById('save-class-btn').addEventListener('click', saveClass);
+    document.getElementById('cancel-class')?.addEventListener('click', function() {
+        document.getElementById('class-form-container').style.display = 'none';
+    });
     
-    // Save Student Button
-    document.getElementById('save-student-btn').addEventListener('click', saveStudent);
+    document.getElementById('add-schedule')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        addScheduleItem();
+    });
     
-    // Save Attendance Button
-    document.getElementById('save-attendance-btn').addEventListener('click', saveAttendance);
+    document.getElementById('class-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveClass();
+    });
+    
+    // Student form handlers
+    document.getElementById('add-student-btn')?.addEventListener('click', function() {
+        document.getElementById('student-form-container').style.display = 'block';
+        document.getElementById('student-form').reset();
+        document.getElementById('student-id').value = '';
+    });
+    
+    document.getElementById('cancel-student')?.addEventListener('click', function() {
+        document.getElementById('student-form-container').style.display = 'none';
+    });
+    
+    document.getElementById('student-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveStudent();
+    });
+    
+    // Attendance form handler
+    document.getElementById('attendance-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveAttendance();
+    });
+    
+    // Report form handlers
+    document.getElementById('class-report-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateClassReport();
+    });
+    
+    document.getElementById('student-report-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateStudentReport();
+    });
+    
+    // Load initial data for select dropdowns
+    loadClassesData();
+    loadStudentsData();
+    
+    // Set current date and time for attendance form
+    const now = new Date();
+    const dateTimeString = now.toISOString().slice(0, 16);
+    const attendanceTimestamp = document.getElementById('attendance-timestamp');
+    if (attendanceTimestamp) {
+        attendanceTimestamp.value = dateTimeString;
+    }
+    
+    // Set current date for report form
+    const today = now.toISOString().slice(0, 10);
+    const reportDate = document.getElementById('report-date');
+    if (reportDate) {
+        reportDate.value = today;
+    }
 }
 
 // Add a new schedule item to the class form
 function addScheduleItem() {
-    const container = document.getElementById('schedule-container');
-    const scheduleItems = container.querySelectorAll('.schedule-item');
+    const container = document.getElementById('schedules-container');
+    const scheduleIndex = container.children.length;
     
-    // Clone the first schedule item
-    const newItem = scheduleItems[0].cloneNode(true);
+    const scheduleItem = document.createElement('div');
+    scheduleItem.classList.add('schedule-item');
     
-    // Clear the input values
-    newItem.querySelectorAll('input, select').forEach(input => {
-        input.value = '';
-    });
+    scheduleItem.innerHTML = `
+        <select name="day_of_week_${scheduleIndex}" required>
+            <option value="">Select Day</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+        <input type="time" name="start_time_${scheduleIndex}" required placeholder="Start Time">
+        <input type="time" name="end_time_${scheduleIndex}" required placeholder="End Time">
+        <input type="text" name="room_number_${scheduleIndex}" required placeholder="Room Number">
+        <button type="button" class="remove-schedule" onclick="this.parentElement.remove()">×</button>
+    `;
     
-    // Add remove button if it's not the first item
-    if (!newItem.querySelector('.remove-schedule-btn')) {
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'btn btn-sm btn-outline-danger remove-schedule-btn';
-        removeBtn.innerHTML = '<i class="bi bi-trash"></i>';
-        removeBtn.addEventListener('click', function() {
-            this.closest('.schedule-item').remove();
-        });
-        
-        newItem.appendChild(removeBtn);
-    }
-    
-    // Append the new item to the container
-    container.appendChild(newItem);
+    container.appendChild(scheduleItem);
 }
 
-// Save a new class
+// Save class data
 async function saveClass() {
     try {
+        // Get form data
+        const classId = document.getElementById('class-id').value;
         const className = document.getElementById('class-name').value;
         const lecturer = document.getElementById('lecturer').value;
-        
-        // Validate required fields
-        if (!className || !lecturer) {
-            alert('Please fill in all required fields');
-            return;
-        }
         
         // Get schedules
         const scheduleItems = document.querySelectorAll('.schedule-item');
         const schedules = [];
         
-        for (const item of scheduleItems) {
-            const dayOfWeek = item.querySelector('.day-of-week').value;
-            const startTime = item.querySelector('.start-time').value;
-            const endTime = item.querySelector('.end-time').value;
-            const roomNumber = item.querySelector('.room-number').value;
+        scheduleItems.forEach((item, index) => {
+            const daySelect = item.querySelector(`select[name="day_of_week_${index}"]`);
+            const startTime = item.querySelector(`input[name="start_time_${index}"]`);
+            const endTime = item.querySelector(`input[name="end_time_${index}"]`);
+            const roomNumber = item.querySelector(`input[name="room_number_${index}"]`);
             
-            if (!dayOfWeek || !startTime || !endTime || !roomNumber) {
-                alert('Please fill in all schedule fields');
-                return;
+            // If all fields have values
+            if (daySelect && startTime && endTime && roomNumber && 
+                daySelect.value && startTime.value && endTime.value && roomNumber.value) {
+                schedules.push({
+                    day_of_week: daySelect.value,
+                    start_time: startTime.value,
+                    end_time: endTime.value,
+                    room_number: roomNumber.value
+                });
             }
-            
-            schedules.push({
-                day_of_week: dayOfWeek,
-                start_time: startTime,
-                end_time: endTime,
-                room_number: roomNumber
-            });
-        }
+        });
         
-        // Create class data
+        // Prepare data
         const classData = {
             class_name: className,
             lecturer: lecturer,
             schedules: schedules
         };
         
-        // Send API request
-        const response = await fetch(`${API_BASE_URL}/classes/`, {
-            method: 'POST',
+        // Check if we are creating or updating
+        let url = '/api/classes';
+        let method = 'POST';
+        
+        if (classId) {
+            url = `/api/classes/${classId}`;
+            method = 'PUT';
+        }
+        
+        // Send request with authentication
+        const response = await authenticatedFetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(classData)
         });
         
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
         const result = await response.json();
         
-        if (response.ok) {
-            alert('Class created successfully');
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addClassModal')).hide();
-            document.getElementById('add-class-form').reset();
-            document.getElementById('schedule-container').innerHTML = document.getElementById('schedule-container').innerHTML;
-            
-            // Reload classes data
-            loadClassesData();
-            loadDashboardData();
-        } else {
-            alert(`Error: ${result.detail || 'Failed to create class'}`);
-        }
+        // Hide form and reload classes
+        document.getElementById('class-form-container').style.display = 'none';
+        loadClassesData();
+        
+        // Show success message
+        alert(`Class ${classId ? 'updated' : 'created'} successfully!`);
+        
     } catch (error) {
-        console.error('Error creating class:', error);
-        alert('An error occurred while creating the class');
+        console.error('Error saving class:', error);
+        alert(`Error: ${error.message}`);
     }
 }
 
-// Save a new student
+// Save student data
 async function saveStudent() {
     try {
+        // Get form data
+        const studentId = document.getElementById('student-id').value;
         const studentName = document.getElementById('student-name').value;
         const fingerprintId = parseInt(document.getElementById('fingerprint-id').value);
         
-        // Validate required fields
-        if (!studentName || isNaN(fingerprintId)) {
-            alert('Please fill in all required fields');
+        // Validate fingerprint ID
+        if (isNaN(fingerprintId) || fingerprintId < 1) {
+            alert('Please enter a valid fingerprint ID (positive number)');
             return;
         }
         
-        // Create student data
+        // Prepare data
         const studentData = {
             name: studentName,
             fingerprint_id: fingerprintId
         };
         
-        // Send API request
-        const response = await fetch(`${API_BASE_URL}/students/`, {
-            method: 'POST',
+        // Check if we are creating or updating
+        let url = '/api/students';
+        let method = 'POST';
+        
+        if (studentId) {
+            url = `/api/students/${studentId}`;
+            method = 'PUT';
+        }
+        
+        // Send request with authentication
+        const response = await authenticatedFetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(studentData)
         });
         
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
         const result = await response.json();
         
-        if (response.ok) {
-            const studentId = result.student_id;
-            
-            // Enroll student in selected classes
-            const selectedClasses = [];
-            document.querySelectorAll('input[name="class-enrollment"]:checked').forEach(checkbox => {
-                selectedClasses.push(checkbox.value);
-            });
-            
-            // Enroll in each class
-            for (const classId of selectedClasses) {
-                await fetch(`${API_BASE_URL}/classes/${classId}/enroll/${studentId}`, {
-                    method: 'POST'
-                });
-            }
-            
-            alert('Student created successfully');
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addStudentModal')).hide();
-            document.getElementById('add-student-form').reset();
-            
-            // Reload students data
-            loadStudentsData();
-            loadDashboardData();
-        } else {
-            alert(`Error: ${result.detail || 'Failed to create student'}`);
-        }
+        // Hide form and reload students
+        document.getElementById('student-form-container').style.display = 'none';
+        loadStudentsData();
+        
+        // Show success message
+        alert(`Student ${studentId ? 'updated' : 'created'} successfully!`);
+        
     } catch (error) {
-        console.error('Error creating student:', error);
-        alert('An error occurred while creating the student');
+        console.error('Error saving student:', error);
+        alert(`Error: ${error.message}`);
     }
 }
 
-// Save attendance record
+// Save attendance data (manual recording)
 async function saveAttendance() {
     try {
+        // Get form data
         const studentId = document.getElementById('attendance-student').value;
-        const classId = document.getElementById('attendance-class-input').value;
-        const timestamp = document.getElementById('attendance-time').value.replace('T', ' ');
+        const classId = document.getElementById('attendance-class').value;
+        const timestamp = document.getElementById('attendance-timestamp').value;
         
-        // Validate required fields
+        // Validate fields
         if (!studentId || !classId || !timestamp) {
-            alert('Please fill in all required fields');
+            alert('Please fill in all fields');
             return;
         }
         
-        // Create attendance data
+        // Format timestamp to ISO string
+        const timestampISO = new Date(timestamp).toISOString();
+        
+        // Prepare data
         const attendanceData = {
             student_id: studentId,
             class_id: classId,
-            timestamp: timestamp
+            timestamp: timestampISO
         };
         
-        // Send API request
-        const response = await fetch(`${API_BASE_URL}/attendance/manual`, {
+        // Send request with authentication
+        const response = await authenticatedFetch('/api/attendance/manual', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -266,54 +300,60 @@ async function saveAttendance() {
             body: JSON.stringify(attendanceData)
         });
         
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
         const result = await response.json();
         
-        if (response.ok) {
-            alert('Attendance recorded successfully');
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('recordAttendanceModal')).hide();
-            document.getElementById('record-attendance-form').reset();
-            
-            // Reload attendance data
-            loadAttendanceData();
-            loadDashboardData();
-        } else {
-            alert(`Error: ${result.detail || 'Failed to record attendance'}`);
-        }
+        // Show success message
+        document.getElementById('attendance-result').style.display = 'block';
+        document.getElementById('attendance-message').textContent = 'Attendance recorded successfully!';
+        
+        // Reset form
+        document.getElementById('attendance-form').reset();
+        
+        // Set current date and time for next record
+        const now = new Date();
+        const dateTimeString = now.toISOString().slice(0, 16);
+        document.getElementById('attendance-timestamp').value = dateTimeString;
+        
     } catch (error) {
         console.error('Error recording attendance:', error);
-        alert('An error occurred while recording attendance');
+        document.getElementById('attendance-result').style.display = 'block';
+        document.getElementById('attendance-message').textContent = `Error: ${error.message}`;
     }
 }
 
 // Load dashboard data
 async function loadDashboardData() {
     try {
-        // Get counts for dashboard
-        const [studentsResponse, classesResponse] = await Promise.all([
-            fetch(`${API_BASE_URL}/students/`),
-            fetch(`${API_BASE_URL}/classes/`)
-        ]);
+        // Load students count
+        const studentsResponse = await authenticatedFetch('/api/students');
+        if (studentsResponse.ok) {
+            const studentsData = await studentsResponse.json();
+            const studentsCount = Object.keys(studentsData.students || {}).length;
+            document.getElementById('total-students').textContent = studentsCount;
+        }
         
-        const studentsData = await studentsResponse.json();
-        const classesData = await classesResponse.json();
+        // Load classes count
+        const classesResponse = await authenticatedFetch('/api/classes');
+        if (classesResponse.ok) {
+            const classesData = await classesResponse.json();
+            const classesCount = Object.keys(classesData.classes || {}).length;
+            document.getElementById('total-classes').textContent = classesCount;
+            
+            // Show today's classes
+            loadTodaysClasses(classesData.classes || {});
+        }
         
-        // Update dashboard stats
-        const students = studentsData.students || {};
-        const classes = classesData.classes || {};
+        // Load today's attendance count - this would need a new endpoint
+        document.getElementById('todays-attendance').textContent = 'N/A';
         
-        document.getElementById('total-students').textContent = Object.keys(students).length;
-        document.getElementById('total-classes').textContent = Object.keys(classes).length;
-        
-        // Load today's classes
-        loadTodaysClasses(classes);
-        
-        // TODO: Load today's attendance count and recent attendance
-        // This would typically come from a specific API endpoint
-        document.getElementById('todays-attendance').textContent = '0';
-        document.getElementById('recent-attendance-table').innerHTML = '<tr><td colspan="3" class="text-center">No recent attendance</td></tr>';
-        
+        // Load recent attendance - this would need a new endpoint
+        document.getElementById('recent-attendance-data').innerHTML = 
+            '<tr><td colspan="3">No recent attendance records</td></tr>';
+            
     } catch (error) {
         console.error('Error loading dashboard data:', error);
     }
@@ -321,180 +361,238 @@ async function loadDashboardData() {
 
 // Load today's classes for the dashboard
 function loadTodaysClasses(classes) {
+    const todayClasses = document.getElementById('todays-classes');
+    
     if (!classes || Object.keys(classes).length === 0) {
+        todayClasses.innerHTML = '<p>No classes found</p>';
         return;
     }
     
     // Get current day of week
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const currentDay = days[new Date().getDay()];
+    const today = days[new Date().getDay()];
     
-    // Filter classes for today
-    const todaysClasses = [];
+    // Filter classes that have a schedule for today
+    const classesToday = Object.entries(classes).filter(([classId, classData]) => {
+        return classData.schedules && classData.schedules.some(schedule => 
+            schedule.day_of_week === today);
+    });
     
-    for (const classId in classes) {
-        const classInfo = classes[classId];
-        const schedules = classInfo.schedules || [];
-        
-        for (const schedule of schedules) {
-            if (schedule.day_of_week === currentDay) {
-                todaysClasses.push({
-                    class_name: classInfo.class_name,
-                    lecturer: classInfo.lecturer,
-                    start_time: schedule.start_time,
-                    end_time: schedule.end_time,
-                    room_number: schedule.room_number
-                });
-            }
-        }
-    }
-    
-    // Sort by start time
-    todaysClasses.sort((a, b) => a.start_time.localeCompare(b.start_time));
-    
-    // Update the table
-    const tableBody = document.getElementById('todays-classes-table');
-    
-    if (todaysClasses.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No classes scheduled for today</td></tr>';
+    if (classesToday.length === 0) {
+        todayClasses.innerHTML = '<p>No classes scheduled for today</p>';
         return;
     }
     
-    tableBody.innerHTML = '';
+    // Create HTML for each class
+    let html = '';
+    classesToday.forEach(([classId, classData]) => {
+        const todaySchedules = classData.schedules.filter(schedule => 
+            schedule.day_of_week === today);
+            
+        todaySchedules.forEach(schedule => {
+            html += `
+                <div class="card">
+                    <h3>${classData.class_name}</h3>
+                    <p><strong>Lecturer:</strong> ${classData.lecturer}</p>
+                    <p><strong>Time:</strong> ${schedule.start_time} - ${schedule.end_time}</p>
+                    <p><strong>Room:</strong> ${schedule.room_number}</p>
+                </div>
+            `;
+        });
+    });
     
-    for (const cls of todaysClasses) {
-        tableBody.innerHTML += `
-            <tr>
-                <td>${cls.class_name}</td>
-                <td>${cls.lecturer}</td>
-                <td>${cls.start_time} - ${cls.end_time}</td>
-                <td>${cls.room_number}</td>
-            </tr>
-        `;
-    }
+    todayClasses.innerHTML = html;
 }
 
-// Load classes data
+// Load classes data for dropdowns and class list
 async function loadClassesData() {
     try {
-        const response = await fetch(`${API_BASE_URL}/classes/`);
+        const response = await authenticatedFetch('/api/classes');
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
         const data = await response.json();
-        
         const classes = data.classes || {};
-        
-        // Update classes table
-        const tableBody = document.getElementById('classes-table');
-        
-        if (Object.keys(classes).length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No classes found</td></tr>';
-            return;
-        }
-        
-        tableBody.innerHTML = '';
-        
-        for (const classId in classes) {
-            const classInfo = classes[classId];
-            const schedules = classInfo.schedules || [];
-            
-            // Format schedules
-            const scheduleText = schedules.map(s => 
-                `${s.day_of_week} ${s.start_time}-${s.end_time} (${s.room_number})`
-            ).join('<br>');
-            
-            // Count enrolled students
-            const enrolledCount = (classInfo.enrolled_students || []).length;
-            
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${classInfo.class_name}</td>
-                    <td>${classInfo.lecturer}</td>
-                    <td>${scheduleText}</td>
-                    <td>${enrolledCount} students</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary action-btn">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger action-btn">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }
         
         // Update class dropdowns
         updateClassDropdowns(classes);
         
+        // Update classes list if we're on the classes page
+        const classesList = document.getElementById('classes-list');
+        if (classesList) {
+            if (Object.keys(classes).length === 0) {
+                classesList.innerHTML = '<p>No classes found</p>';
+                return;
+            }
+            
+            let html = '';
+            Object.entries(classes).forEach(([classId, classData]) => {
+                html += `
+                    <div class="card">
+                        <h3>${classData.class_name}</h3>
+                        <p><strong>Lecturer:</strong> ${classData.lecturer}</p>
+                        <p><strong>Schedules:</strong></p>
+                        <ul>
+                            ${classData.schedules.map(schedule => `
+                                <li>${schedule.day_of_week}: ${schedule.start_time} - ${schedule.end_time} (Room ${schedule.room_number})</li>
+                            `).join('')}
+                        </ul>
+                        <p><strong>Enrolled Students:</strong> ${(classData.enrolled_students || []).length}</p>
+                        <div class="card-actions">
+                            <button class="btn secondary edit-class" data-id="${classId}">Edit</button>
+                            <button class="btn danger delete-class" data-id="${classId}">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            classesList.innerHTML = html;
+            
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-class').forEach(button => {
+                button.addEventListener('click', function() {
+                    const classId = this.getAttribute('data-id');
+                    const classData = classes[classId];
+                    
+                    document.getElementById('class-id').value = classId;
+                    document.getElementById('class-name').value = classData.class_name;
+                    document.getElementById('lecturer').value = classData.lecturer;
+                    
+                    // Set up schedules
+                    const schedulesContainer = document.getElementById('schedules-container');
+                    schedulesContainer.innerHTML = '';
+                    
+                    classData.schedules.forEach((schedule, index) => {
+                        addScheduleItem();
+                        const scheduleItem = schedulesContainer.children[index];
+                        
+                        scheduleItem.querySelector(`select[name="day_of_week_${index}"]`).value = schedule.day_of_week;
+                        scheduleItem.querySelector(`input[name="start_time_${index}"]`).value = schedule.start_time;
+                        scheduleItem.querySelector(`input[name="end_time_${index}"]`).value = schedule.end_time;
+                        scheduleItem.querySelector(`input[name="room_number_${index}"]`).value = schedule.room_number;
+                    });
+                    
+                    document.getElementById('class-form-container').style.display = 'block';
+                });
+            });
+            
+            document.querySelectorAll('.delete-class').forEach(button => {
+                button.addEventListener('click', async function() {
+                    if (confirm('Are you sure you want to delete this class?')) {
+                        const classId = this.getAttribute('data-id');
+                        
+                        try {
+                            const response = await authenticatedFetch(`/api/classes/${classId}`, {
+                                method: 'DELETE'
+                            });
+                            
+                            if (!response.ok) {
+                                throw new Error(`Server responded with status: ${response.status}`);
+                            }
+                            
+                            alert('Class deleted successfully!');
+                            loadClassesData();
+                        } catch (error) {
+                            console.error('Error deleting class:', error);
+                            alert(`Error: ${error.message}`);
+                        }
+                    }
+                });
+            });
+        }
     } catch (error) {
         console.error('Error loading classes:', error);
     }
 }
 
-// Load students data
+// Load students data for dropdowns and student list
 async function loadStudentsData() {
     try {
-        const response = await fetch(`${API_BASE_URL}/students/`);
-        const data = await response.json();
+        const response = await authenticatedFetch('/api/students');
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
         
+        const data = await response.json();
         const students = data.students || {};
         
-        // Update students table
-        const tableBody = document.getElementById('students-table');
-        
-        if (Object.keys(students).length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No students found</td></tr>';
-            return;
-        }
-        
-        // Load class data for mapping class IDs to names
-        const classesResponse = await fetch(`${API_BASE_URL}/classes/`);
-        const classesData = await classesResponse.json();
-        const classes = classesData.classes || {};
-        
-        tableBody.innerHTML = '';
-        
-        for (const studentId in students) {
-            const student = students[studentId];
-            const enrolledClasses = student.enrolled_classes || [];
-            
-            // Map class IDs to class names
-            const classNames = enrolledClasses.map(classId => {
-                return classes[classId] ? classes[classId].class_name : 'Unknown Class';
-            }).join(', ');
-            
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${student.name}</td>
-                    <td>${student.fingerprint_id}</td>
-                    <td>${classNames}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary action-btn">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger action-btn">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }
-        
-        // Update student dropdown
+        // Update student dropdowns
         updateStudentDropdown(students);
         
+        // Update students list if we're on the students page
+        const studentsList = document.getElementById('students-list');
+        if (studentsList) {
+            if (Object.keys(students).length === 0) {
+                studentsList.innerHTML = '<p>No students found</p>';
+                return;
+            }
+            
+            let html = '';
+            Object.entries(students).forEach(([studentId, studentData]) => {
+                html += `
+                    <div class="card">
+                        <h3>${studentData.name}</h3>
+                        <p><strong>ID:</strong> ${studentId}</p>
+                        <p><strong>Fingerprint ID:</strong> ${studentData.fingerprint_id}</p>
+                        <p><strong>Enrolled Classes:</strong> ${(studentData.enrolled_classes || []).length}</p>
+                        <div class="card-actions">
+                            <button class="btn secondary edit-student" data-id="${studentId}">Edit</button>
+                            <button class="btn danger delete-student" data-id="${studentId}">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            studentsList.innerHTML = html;
+            
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-student').forEach(button => {
+                button.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    const studentData = students[studentId];
+                    
+                    document.getElementById('student-id').value = studentId;
+                    document.getElementById('student-name').value = studentData.name;
+                    document.getElementById('fingerprint-id').value = studentData.fingerprint_id;
+                    
+                    document.getElementById('student-form-container').style.display = 'block';
+                });
+            });
+            
+            document.querySelectorAll('.delete-student').forEach(button => {
+                button.addEventListener('click', async function() {
+                    if (confirm('Are you sure you want to delete this student?')) {
+                        const studentId = this.getAttribute('data-id');
+                        
+                        try {
+                            const response = await authenticatedFetch(`/api/students/${studentId}`, {
+                                method: 'DELETE'
+                            });
+                            
+                            if (!response.ok) {
+                                throw new Error(`Server responded with status: ${response.status}`);
+                            }
+                            
+                            alert('Student deleted successfully!');
+                            loadStudentsData();
+                        } catch (error) {
+                            console.error('Error deleting student:', error);
+                            alert(`Error: ${error.message}`);
+                        }
+                    }
+                });
+            });
+        }
     } catch (error) {
         console.error('Error loading students:', error);
     }
 }
 
-// Load attendance data
+// Load attendance data for reports
 async function loadAttendanceData() {
-    // Note: This would typically filter based on selected date and class
-    // but our API doesn't have this functionality yet, so this is a placeholder
-    
-    // For now, we'll leave it as a placeholder
-    document.getElementById('attendance-table').innerHTML = 
-        '<tr><td colspan="4" class="text-center">No attendance records found</td></tr>';
+    // This would fetch attendance data for reports
+    // Implementation will depend on the specific endpoint
 }
 
 // Generate class attendance report
@@ -508,75 +606,63 @@ async function generateClassReport() {
             return;
         }
         
-        // Request report data
-        const response = await fetch(`${API_BASE_URL}/attendance/report/${classId}?date=${date}`);
+        const response = await authenticatedFetch(`/api/attendance/report/${classId}?date=${date}`);
         
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Failed to generate report');
+            throw new Error(`Server responded with status: ${response.status}`);
         }
         
         const reportData = await response.json();
         
-        // Display report
-        const resultsContainer = document.getElementById('report-results');
-        
-        resultsContainer.innerHTML = `
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h4>${reportData.class_name} - Attendance Report</h4>
-                    <p>Date: ${reportData.date}</p>
-                </div>
+        // Show report
+        document.getElementById('report-title').textContent = 
+            `Attendance Report: ${reportData.class_name} (${reportData.date})`;
+            
+        let html = `
+            <div class="report-summary">
+                <p><strong>Total Students:</strong> ${reportData.total_students}</p>
+                <p><strong>Present:</strong> ${reportData.present_students}</p>
+                <p><strong>Absent:</strong> ${reportData.absent_students}</p>
+                <p><strong>Attendance Rate:</strong> ${reportData.total_students ? 
+                    Math.round((reportData.present_students / reportData.total_students) * 100) : 0}%</p>
             </div>
             
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="report-stat-card">
-                        <div class="report-stat-value">${reportData.total_students}</div>
-                        <div class="report-stat-label">Total Students</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="report-stat-card">
-                        <div class="report-stat-value">${reportData.present_students}</div>
-                        <div class="report-stat-label">Present</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="report-stat-card">
-                        <div class="report-stat-value">${reportData.absent_students}</div>
-                        <div class="report-stat-label">Absent</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${reportData.attendance_list.map(item => `
-                            <tr>
-                                <td>${item.name}</td>
-                                <td>
-                                    <span class="badge ${item.status === 'present' ? 'bg-success' : 'bg-danger'}">
-                                        ${item.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
         
+        if (reportData.attendance_list && reportData.attendance_list.length > 0) {
+            reportData.attendance_list.forEach(entry => {
+                html += `
+                    <tr>
+                        <td>${entry.name}</td>
+                        <td>${entry.status}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            html += '<tr><td colspan="2">No attendance data for this date</td></tr>';
+        }
+        
+        html += `
+                </tbody>
+            </table>
+        `;
+        
+        document.getElementById('report-content').innerHTML = html;
+        document.getElementById('report-result').style.display = 'block';
+        
     } catch (error) {
-        console.error('Error generating report:', error);
-        alert(`Error: ${error.message}`);
+        console.error('Error generating class report:', error);
+        document.getElementById('report-title').textContent = 'Error Generating Report';
+        document.getElementById('report-content').innerHTML = `<p class="error-message">${error.message}</p>`;
+        document.getElementById('report-result').style.display = 'block';
     }
 }
 
@@ -590,151 +676,115 @@ async function generateStudentReport() {
             return;
         }
         
-        // Request student attendance data
-        const response = await fetch(`${API_BASE_URL}/attendance/student/${studentId}`);
+        const response = await authenticatedFetch(`/api/attendance/student/${studentId}`);
         
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Failed to generate summary');
+            throw new Error(`Server responded with status: ${response.status}`);
         }
         
-        const summaryData = await response.json();
+        const reportData = await response.json();
         
-        // Display summary
-        const resultsContainer = document.getElementById('report-results');
-        
-        resultsContainer.innerHTML = `
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h4>${summaryData.name} - Attendance Summary</h4>
-                </div>
+        // Show report
+        document.getElementById('report-title').textContent = 
+            `Attendance Summary: ${reportData.student_name}`;
+            
+        let html = `
+            <div class="report-summary">
+                <p><strong>Total Classes:</strong> ${reportData.total_classes}</p>
+                <p><strong>Classes Attended:</strong> ${reportData.classes_attended}</p>
+                <p><strong>Attendance Rate:</strong> ${reportData.total_classes ? 
+                    Math.round((reportData.classes_attended / reportData.total_classes) * 100) : 0}%</p>
             </div>
             
-            <div class="row mb-4">
-                <div class="col-12">
-                    <p>Enrolled in ${summaryData.enrolled_classes} classes</p>
-                </div>
-            </div>
-            
-            ${summaryData.class_attendance.length === 0 ? 
-                '<p>No attendance records found for this student.</p>' :
-                `<div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Class</th>
-                                <th>Total Days</th>
-                                <th>Days Attended</th>
-                                <th>Attendance Rate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${summaryData.class_attendance.map(item => `
-                                <tr>
-                                    <td>${item.class_name}</td>
-                                    <td>${item.total_days}</td>
-                                    <td>${item.attended_days}</td>
-                                    <td>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" 
-                                                style="width: ${item.attendance_percentage}%;" 
-                                                aria-valuenow="${item.attendance_percentage}" 
-                                                aria-valuemin="0" aria-valuemax="100">
-                                                ${item.attendance_percentage}%
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>`
-            }
+            <h3>Attendance by Class</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Attendance Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
+        
+        if (reportData.attendance_by_class && Object.keys(reportData.attendance_by_class).length > 0) {
+            Object.entries(reportData.attendance_by_class).forEach(([className, data]) => {
+                html += `
+                    <tr>
+                        <td>${className}</td>
+                        <td>${data.total_sessions ? 
+                            Math.round((data.attended / data.total_sessions) * 100) : 0}%</td>
+                    </tr>
+                `;
+            });
+        } else {
+            html += '<tr><td colspan="2">No attendance data available</td></tr>';
+        }
+        
+        html += `
+                </tbody>
+            </table>
+        `;
+        
+        document.getElementById('report-content').innerHTML = html;
+        document.getElementById('report-result').style.display = 'block';
         
     } catch (error) {
-        console.error('Error generating student summary:', error);
-        alert(`Error: ${error.message}`);
+        console.error('Error generating student report:', error);
+        document.getElementById('report-title').textContent = 'Error Generating Report';
+        document.getElementById('report-content').innerHTML = `<p class="error-message">${error.message}</p>`;
+        document.getElementById('report-result').style.display = 'block';
     }
 }
 
-// Update class dropdown options
+// Update class dropdowns with available classes
 function updateClassDropdowns(classes) {
-    // Add classes to the dropdowns
-    const classDropdowns = [
-        document.getElementById('attendance-class'),
-        document.getElementById('report-class'),
-        document.getElementById('attendance-class-input')
-    ];
+    const attendanceClassSelect = document.getElementById('attendance-class');
+    const reportClassSelect = document.getElementById('report-class');
     
-    // For each dropdown
-    classDropdowns.forEach(dropdown => {
-        if (!dropdown) return;
+    if (attendanceClassSelect) {
+        let options = '<option value="">Select Class</option>';
         
-        // Keep the default option
-        const defaultOption = dropdown.querySelector('option');
-        dropdown.innerHTML = '';
-        if (defaultOption) {
-            dropdown.appendChild(defaultOption);
-        }
+        Object.entries(classes).forEach(([classId, classData]) => {
+            options += `<option value="${classId}">${classData.class_name}</option>`;
+        });
         
-        // Add each class as an option
-        for (const classId in classes) {
-            const option = document.createElement('option');
-            option.value = classId;
-            option.textContent = classes[classId].class_name;
-            dropdown.appendChild(option);
-        }
-    });
-    
-    // Update class enrollment checkboxes in student form
-    const enrollmentContainer = document.getElementById('class-enrollment-checkboxes');
-    
-    if (Object.keys(classes).length === 0) {
-        enrollmentContainer.innerHTML = `
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" disabled>
-                <label class="form-check-label">No classes available</label>
-            </div>
-        `;
-        return;
+        attendanceClassSelect.innerHTML = options;
     }
     
-    enrollmentContainer.innerHTML = '';
-    
-    for (const classId in classes) {
-        enrollmentContainer.innerHTML += `
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="${classId}" name="class-enrollment" id="class-${classId}">
-                <label class="form-check-label" for="class-${classId}">${classes[classId].class_name}</label>
-            </div>
-        `;
+    if (reportClassSelect) {
+        let options = '<option value="">Select Class</option>';
+        
+        Object.entries(classes).forEach(([classId, classData]) => {
+            options += `<option value="${classId}">${classData.class_name}</option>`;
+        });
+        
+        reportClassSelect.innerHTML = options;
     }
 }
 
-// Update student dropdown
+// Update student dropdowns with available students
 function updateStudentDropdown(students) {
-    const studentDropdowns = [
-        document.getElementById('attendance-student'),
-        document.getElementById('report-student')
-    ];
+    const attendanceStudentSelect = document.getElementById('attendance-student');
+    const reportStudentSelect = document.getElementById('report-student');
     
-    studentDropdowns.forEach(dropdown => {
-        if (!dropdown) return;
+    if (attendanceStudentSelect) {
+        let options = '<option value="">Select Student</option>';
         
-        // Keep the default option
-        const defaultOption = dropdown.querySelector('option');
-        dropdown.innerHTML = '';
-        if (defaultOption) {
-            dropdown.appendChild(defaultOption);
-        }
+        Object.entries(students).forEach(([studentId, studentData]) => {
+            options += `<option value="${studentId}">${studentData.name}</option>`;
+        });
         
-        // Add each student as an option
-        for (const studentId in students) {
-            const option = document.createElement('option');
-            option.value = studentId;
-            option.textContent = students[studentId].name;
-            dropdown.appendChild(option);
-        }
-    });
+        attendanceStudentSelect.innerHTML = options;
+    }
+    
+    if (reportStudentSelect) {
+        let options = '<option value="">Select Student</option>';
+        
+        Object.entries(students).forEach(([studentId, studentData]) => {
+            options += `<option value="${studentId}">${studentData.name}</option>`;
+        });
+        
+        reportStudentSelect.innerHTML = options;
+    }
 }

@@ -9,6 +9,7 @@ dependencies = [
     "firebase-admin>=6.7.0",
     "pydantic>=2.11.1",
     "pyserial>=3.5",
+    "python-dotenv>=1.1.0",
     "python-multipart>=0.0.20",
     "pytz>=2025.2",
     "uvicorn>=0.34.0",

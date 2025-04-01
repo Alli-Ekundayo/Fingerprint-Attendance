@@ -8,10 +8,11 @@ import time
 import json
 from datetime import datetime
 import threading
+import dotenv
+from pathlib import Path
 
-# Set environment variables for simulation mode
-os.environ['FIREBASE_SIMULATION'] = 'true'
-os.environ['FIREBASE_DATABASE_URL'] = 'https://fingerprint-attendance-dummy.firebaseio.com'
+# Load environment variables from .env file
+dotenv.load_dotenv()
 
 # Import routes
 from routes import class_routes, student_routes, attendance_routes
@@ -46,6 +47,12 @@ os.makedirs("web_interface/js", exist_ok=True)
 app.mount("/css", StaticFiles(directory="web_interface/css"), name="css")
 app.mount("/js", StaticFiles(directory="web_interface/js"), name="js")
 
+# Add routes for specific JS files
+@app.get("/js/auth.js", response_class=HTMLResponse)
+async def get_auth_js():
+    with open("web_interface/auth.js", "r") as f:
+        return f.read()
+
 # Mount static directory if it exists (for other static assets)
 if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -54,7 +61,14 @@ if os.path.exists("static"):
 @app.get("/", response_class=HTMLResponse)
 async def root():
     with open("web_interface/index.html", "r") as f:
-        return f.read()
+        html_content = f.read()
+        
+    # Replace Firebase configuration placeholders with environment variables
+    html_content = html_content.replace("<API_KEY>", os.environ.get("FIREBASE_API_KEY", ""))
+    html_content = html_content.replace("<PROJECT_ID>", os.environ.get("FIREBASE_PROJECT_ID", ""))
+    html_content = html_content.replace("<APP_ID>", os.environ.get("FIREBASE_APP_ID", ""))
+    
+    return html_content
 
 @app.get("/api/health")
 async def health_check():

@@ -1,115 +1,363 @@
-/* Custom styles for Fingerprint Attendance System */
+/* Main styles for Fingerprint Attendance System */
 
-/* Basic styling */
+/* Base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
 }
 
-/* Page content visibility */
-.page-content {
-    display: none;
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.page-content.active {
-    display: block;
+header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Stats cards */
-.stats-card {
-    position: relative;
-    overflow: hidden;
-    border: none;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-    transition: transform 0.3s;
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.stats-card:hover {
-    transform: translateY(-5px);
+h1, h2, h3, h4 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
 }
 
-.card-value {
-    font-size: 2.5rem;
-    font-weight: bold;
+header h1 {
+    color: #fff;
     margin-bottom: 0;
 }
 
-.card-icon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 48px;
-    height: 48px;
+a {
+    text-decoration: none;
+    color: #3498db;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-actions {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    color: white;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
-/* Tables */
-.table-responsive {
-    overflow-x: auto;
+.help-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
 }
 
-table th {
-    font-weight: 600;
-    color: #495057;
-}
-
-/* Action buttons */
-.action-btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    margin-right: 0.25rem;
-}
-
-/* Form elements */
-.form-control:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-/* Schedule items */
-.schedule-item {
-    position: relative;
-}
-
-.remove-schedule-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-}
-
-/* Report cards */
-.report-stat-card {
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
+.error-message {
+    color: #e74c3c;
+    background-color: #fadbd8;
+    padding: 0.75rem;
+    border-radius: 4px;
     margin-bottom: 1rem;
 }
 
-.report-stat-value {
-    font-size: 1.75rem;
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn.primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn.primary:hover {
+    background-color: #2980b9;
+}
+
+.btn.secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn.secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.btn.danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn.danger:hover {
+    background-color: #c0392b;
+}
+
+/* Navigation */
+nav {
+    background-color: #34495e;
+    color: white;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+nav a:hover, nav a.active {
+    background-color: #2c3e50;
+}
+
+/* Main content area */
+main {
+    padding: 2rem;
+}
+
+.page-section {
+    display: none;
+}
+
+.page-section.active {
+    display: block;
+}
+
+/* Cards and lists */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Dashboard styles */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-card h3 {
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+    font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 0.25rem;
+    color: #2c3e50;
 }
 
-.report-stat-label {
-    color: #6c757d;
-    font-size: 0.875rem;
+.dashboard-section {
+    margin-bottom: 2.5rem;
 }
 
-/* Mobile responsiveness */
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Form containers */
+.form-container {
+    max-width: 800px;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Schedule items in class form */
+.schedule-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.schedule-item:last-child {
+    border-bottom: none;
+}
+
+.remove-schedule {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+}
+
+/* Report styles */
+.report-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#report-content {
+    margin-top: 1.5rem;
+}
+
+/* Login specific styles */
+#login-container {
+    text-align: center;
+}
+
+#login-container form {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+#logout-button {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#logout-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .card-value {
-        font-size: 2rem;
+    nav ul {
+        flex-direction: column;
     }
     
-    .card-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.25rem;
+    .card-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .schedule-item {
+        grid-template-columns: 1fr;
+    }
+    
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
     }
 }
