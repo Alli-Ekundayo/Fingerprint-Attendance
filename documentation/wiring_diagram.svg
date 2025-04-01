@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <style>
+    text {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .subtitle {
+      font-size: 18px;
+    }
+    .component {
+      font-weight: bold;
+    }
+    .connection {
+      font-style: italic;
+    }
+    .esp32 {
+      fill: #a3c2c2;
+      stroke: #333;
+      stroke-width: 2;
+    }
+    .fingerprint {
+      fill: #c2a3a3;
+      stroke: #333;
+      stroke-width: 2;
+    }
+    .led {
+      stroke: #333;
+      stroke-width: 1;
+    }
+    .wire {
+      stroke-width: 2;
+      fill: none;
+    }
+    .notes {
+      font-size: 12px;
+      fill: #555;
+    }
+  </style>
+  
+  <!-- Title -->
+  <text x="400" y="40" text-anchor="middle" class="title">ESP32 Fingerprint Attendance System - Wiring Diagram</text>
+  
+  <!-- ESP32 Module -->
+  <rect x="150" y="150" width="200" height="300" rx="10" class="esp32" />
+  <text x="250" y="130" text-anchor="middle" class="component">ESP32 Development Board</text>
+  
+  <!-- ESP32 Pins -->
+  <text x="190" y="180" class="connection">3.3V</text>
+  <text x="190" y="210" class="connection">GND</text>
+  <text x="190" y="240" class="connection">GPIO16 (RX2)</text>
+  <text x="190" y="270" class="connection">GPIO17 (TX2)</text>
+  <text x="190" y="300" class="connection">GPIO12 (RED LED)</text>
+  <text x="190" y="330" class="connection">GPIO14 (GREEN LED)</text>
+  <text x="190" y="360" class="connection">GPIO27 (BLUE LED)</text>
+  
+  <!-- Fingerprint Module -->
+  <rect x="550" y="150" width="150" height="200" rx="10" class="fingerprint" />
+  <text x="625" y="130" text-anchor="middle" class="component">R305 Fingerprint Sensor</text>
+  
+  <!-- Fingerprint Pins -->
+  <text x="580" y="180" class="connection">VCC</text>
+  <text x="580" y="210" class="connection">GND</text>
+  <text x="580" y="240" class="connection">TX</text>
+  <text x="580" y="270" class="connection">RX</text>
+  
+  <!-- LED Indicators -->
+  <circle cx="550" cy="380" r="15" class="led" fill="#ff6666" />
+  <text x="580" y="385" class="connection">Red LED (Error)</text>
+  
+  <circle cx="550" cy="420" r="15" class="led" fill="#66ff66" />
+  <text x="580" y="425" class="connection">Green LED (Success)</text>
+  
+  <circle cx="550" cy="460" r="15" class="led" fill="#6666ff" />
+  <text x="580" y="465" class="connection">Blue LED (Processing)</text>
+  
+  <!-- Connections -->
+  <!-- Power connections -->
+  <path d="M 350 180 L 550 180" class="wire" stroke="#ff0000" />
+  <path d="M 350 210 L 550 210" class="wire" stroke="#000000" />
+  
+  <!-- Data connections -->
+  <path d="M 350 240 L 550 270" class="wire" stroke="#00ff00" />
+  <path d="M 350 270 L 550 240" class="wire" stroke="#0000ff" />
+  
+  <!-- LED connections -->
+  <path d="M 350 300 L 535 380" class="wire" stroke="#ff6666" />
+  <path d="M 350 330 L 535 420" class="wire" stroke="#66ff66" />
+  <path d="M 350 360 L 535 460" class="wire" stroke="#6666ff" />
+  
+  <!-- Notes -->
+  <rect x="150" y="500" width="600" height="80" rx="5" fill="#f9f9f9" stroke="#ccc" />
+  <text x="160" y="520" class="notes">Notes:</text>
+  <text x="160" y="540" class="notes">1. Connect ESP32 3.3V to fingerprint sensor VCC (fingerprint sensor typically operates at 3.3V)</text>
+  <text x="160" y="560" class="notes">2. Connect ESP32 GPIO16 (RX2) to fingerprint sensor TX for receiving data</text>
+  <text x="160" y="580" class="notes">3. Connect ESP32 GPIO17 (TX2) to fingerprint sensor RX for sending commands</text>
+  
+  <!-- Extra Legend -->
+  <text x="650" y="520" class="notes" fill="#ff0000">— Power (3.3V)</text>
+  <text x="650" y="540" class="notes" fill="#000000">— Ground (GND)</text>
+  <text x="650" y="560" class="notes" fill="#00ff00">— Data TX</text>
+  <text x="650" y="580" class="notes" fill="#0000ff">— Data RX</text>
+</svg>

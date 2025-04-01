@@ -1,0 +1,152 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "attendance": {
+      ".read": "auth.uid != null",
+      ".write": "auth.uid != null",
+      
+      "$date": {
+        ".read": true,
+        ".write": true,
+        
+        "$user_id": {
+          ".validate": "newData.hasChildren(['user_id', 'timestamp', 'status'])",
+          
+          "user_id": {
+            ".validate": "newData.isNumber() && newData.val() === parseInt(newData.val(), 10)"
+          },
+          
+          "timestamp": {
+            ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$/)"
+          },
+          
+          "status": {
+            ".validate": "newData.isString() && newData.val() === 'present'"
+          },
+          
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    
+    "users": {
+      ".read": "auth.uid != null",
+      ".write": "auth.uid != null",
+      
+      "$user_id": {
+        ".validate": "newData.hasChildren(['name'])",
+        
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        
+        "role": {
+          ".validate": "newData.isString()"
+        },
+        
+        "department": {
+          ".validate": "newData.isString()"
+        },
+        
+        "enrolled_date": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+        },
+        
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    
+    "system_config": {
+      ".read": true,
+      ".write": "auth.uid != null",
+      
+      "enrollment_enabled": {
+        ".validate": "newData.isBoolean()"
+      },
+      
+      "verification_enabled": {
+        ".validate": "newData.isBoolean()"
+      },
+      
+      "timezone_offset": {
+        ".validate": "newData.isNumber()"
+      },
+      
+      "attendance_window": {
+        ".validate": "newData.hasChildren(['start', 'end'])",
+        
+        "start": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{2}:\\d{2}:\\d{2}$/)"
+        },
+        
+        "end": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{2}:\\d{2}:\\d{2}$/)"
+        }
+      },
+      
+      "late_threshold": {
+        ".validate": "newData.isString() && newData.val().matches(/^\\d{2}:\\d{2}:\\d{2}$/)"
+      },
+      
+      "duplicate_scan_interval": {
+        ".validate": "newData.isNumber() && newData.val() > 0"
+      }
+    },
+    
+    "device_status": {
+      ".read": true,
+      ".write": true,
+      
+      "last_online": {
+        ".validate": "newData.isString()"
+      },
+      
+      "ip_address": {
+        ".validate": "newData.isString()"
+      },
+      
+      "firmware_version": {
+        ".validate": "newData.isString()"
+      },
+      
+      "sensor_capacity": {
+        ".validate": "newData.isNumber() && newData.val() > 0"
+      },
+      
+      "templates_used": {
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      },
+      
+      "free_memory": {
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      }
+    },
+    
+    "events": {
+      ".read": "auth.uid != null",
+      ".write": true,
+      
+      "$event_id": {
+        ".validate": "newData.hasChildren(['type', 'timestamp'])",
+        
+        "type": {
+          ".validate": "newData.isString()"
+        },
+        
+        "timestamp": {
+          ".validate": "newData.isString()"
+        },
+        
+        "details": {
+          ".validate": "newData.isString()"
+        }
+      }
+    }
+  }
+}

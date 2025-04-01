@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Fingerprint Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .card {
+            flex-basis: 48%;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: #f9f9f9;
+        }
+        .full-width {
+            flex-basis: 100%;
+        }
+        img.diagram {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ESP32 Fingerprint Attendance System</h1>
+        <p>An IoT-based biometric attendance solution using Arduino ESP32 with Firebase backend</p>
+    </header>
+
+    <div class="container">
+        <div class="card full-width">
+            <h2>Project Overview</h2>
+            <p>This project implements a fingerprint-based attendance system using ESP32 microcontroller, R305 fingerprint sensor, and Firebase real-time database for cloud storage. The system allows for:</p>
+            <ul>
+                <li>Enrollment of new fingerprints</li>
+                <li>Verification against stored templates</li>
+                <li>Real-time attendance logging to Firebase</li>
+                <li>Status indication via LEDs</li>
+                <li>Time synchronization via NTP</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Hardware Components</h2>
+            <ul>
+                <li><strong>ESP32 Development Board</strong> - Main controller</li>
+                <li><strong>R305 Fingerprint Sensor</strong> - Biometric scanner</li>
+                <li><strong>LEDs</strong> - Status indicators (Red, Green, Blue)</li>
+                <li><strong>Resistors</strong> - 220Ω for LEDs</li>
+                <li><strong>Breadboard</strong> - For prototype assembly</li>
+                <li><strong>Jumper Wires</strong> - For connections</li>
+                <li><strong>USB Cable</strong> - For power and programming</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Software Components</h2>
+            <ul>
+                <li><strong>Arduino IDE</strong> - For programming ESP32</li>
+                <li><strong>Firebase</strong> - Real-time database for attendance records</li>
+                <li><strong>Libraries:</strong>
+                    <ul>
+                        <li>Adafruit Fingerprint Sensor Library</li>
+                        <li>Firebase ESP32 Client</li>
+                        <li>WiFi Library</li>
+                        <li>NTPClient for time synchronization</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card full-width">
+            <h2>Wiring Diagram</h2>
+            <img src="/documentation/wiring_diagram.svg" alt="Wiring Diagram" class="diagram">
+            <p>The diagram shows connections between ESP32 and the fingerprint sensor, along with indicator LEDs.</p>
+        </div>
+
+        <div class="card full-width">
+            <h2>Documentation</h2>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                <a href="/documentation/setup_guide.md" class="button">Setup Guide</a>
+                <a href="/documentation/troubleshooting.md" class="button">Troubleshooting</a>
+                <a href="/arduino_code/fingerprint_attendance_system.ino" class="button">Arduino Code</a>
+                <a href="/firebase_config/firebase_schema.json" class="button">Firebase Schema</a>
+                <a href="/firebase_config/security_rules.json" class="button">Security Rules</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Key Features</h2>
+            <ul>
+                <li><strong>Fingerprint Enrollment</strong> - Register new users</li>
+                <li><strong>Real-time Attendance</strong> - Records with timestamps</li>
+                <li><strong>Cloud Storage</strong> - Secure data in Firebase</li>
+                <li><strong>Error Handling</strong> - Retry mechanism for failures</li>
+                <li><strong>LED Indicators</strong> - Visual status feedback</li>
+                <li><strong>Serial Commands</strong> - For system control</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Getting Started</h2>
+            <ol>
+                <li>Assemble the hardware according to the wiring diagram</li>
+                <li>Set up Firebase project and Realtime Database</li>
+                <li>Configure Arduino IDE with required libraries</li>
+                <li>Update WiFi and Firebase credentials in the code</li>
+                <li>Upload the code to ESP32</li>
+                <li>Enroll fingerprints using serial commands</li>
+                <li>Start logging attendance</li>
+            </ol>
+            <p>For detailed instructions, refer to the <a href="/documentation/setup_guide.md">Setup Guide</a>.</p>
+        </div>
+    </div>
+
+    <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <p>IoT Fingerprint Attendance System Documentation - Created 2023</p>
+    </footer>
+</body>
+</html>

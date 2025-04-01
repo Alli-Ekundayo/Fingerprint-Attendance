@@ -1,0 +1,79 @@
+{
+  "attendance": {
+    "2023-05-21": {
+      "1": {
+        "user_id": 1,
+        "timestamp": "2023-05-21 08:30:45",
+        "status": "present"
+      },
+      "2": {
+        "user_id": 2,
+        "timestamp": "2023-05-21 08:35:12",
+        "status": "present"
+      }
+    },
+    "2023-05-22": {
+      "1": {
+        "user_id": 1,
+        "timestamp": "2023-05-22 08:28:33",
+        "status": "present"
+      },
+      "3": {
+        "user_id": 3,
+        "timestamp": "2023-05-22 09:15:20",
+        "status": "present"
+      }
+    }
+  },
+  "users": {
+    "1": {
+      "name": "John Doe",
+      "role": "Employee",
+      "department": "Engineering",
+      "enrolled_date": "2023-05-01"
+    },
+    "2": {
+      "name": "Jane Smith",
+      "role": "Manager",
+      "department": "Marketing",
+      "enrolled_date": "2023-05-01"
+    },
+    "3": {
+      "name": "Michael Johnson",
+      "role": "Employee",
+      "department": "Finance",
+      "enrolled_date": "2023-05-02"
+    }
+  },
+  "system_config": {
+    "enrollment_enabled": true,
+    "verification_enabled": true,
+    "timezone_offset": 0,
+    "attendance_window": {
+      "start": "08:00:00",
+      "end": "18:00:00"
+    },
+    "late_threshold": "09:30:00",
+    "duplicate_scan_interval": 300
+  },
+  "device_status": {
+    "last_online": "2023-05-22 10:45:32",
+    "ip_address": "192.168.1.100",
+    "firmware_version": "1.0.0",
+    "sensor_capacity": 127,
+    "templates_used": 3,
+    "free_memory": 152340
+  },
+  "events": {
+    "2023-05-22_104530": {
+      "type": "system_start",
+      "timestamp": "2023-05-22 10:45:30",
+      "details": "System initialized successfully"
+    },
+    "2023-05-22_104532": {
+      "type": "wifi_connected",
+      "timestamp": "2023-05-22 10:45:32",
+      "details": "Connected to WiFi network"
+    }
+  }
+}
