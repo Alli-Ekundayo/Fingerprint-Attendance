@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - Fingerprint Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding-top: 60px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: #333;
+            padding: 0.5rem 1rem;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        code {
+            color: #d63384;
+        }
+        .method-get {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .method-post {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .method-put {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .method-delete {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .endpoint {
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            font-family: monospace;
+            border-radius: 3px;
+        }
+        .response-example {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .table-params th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-fingerprint me-2"></i>Fingerprint Attendance System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Documentation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="api.html">API Reference</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="hardware.html">Hardware Setup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../">Web Interface</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#introduction">
+                                Introduction
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#authentication">
+                                Authentication
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#error-handling">
+                                Error Handling
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#students-api">
+                                Students API
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#classes-api">
+                                Classes API
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#attendance-api">
+                                Attendance API
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#system-api">
+                                System API
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#webhook-api">
+                                Webhooks
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <section id="introduction">
+                    <h1>API Reference</h1>
+                    <p class="lead">This documentation covers the RESTful API endpoints provided by the Fingerprint Attendance System backend.</p>
+                    
+                    <div class="alert alert-primary" role="alert">
+                        <h4 class="alert-heading">API Base URL</h4>
+                        <p class="mb-0">All API endpoints are prefixed with: <code>/api</code>. For example, the full URL for the students endpoint would be <code>http://your-server:5000/api/students/</code>.</p>
+                    </div>
+                    
+                    <h3 class="mt-4">API Overview</h3>
+                    <p>The Fingerprint Attendance System API is organized around RESTful principles. It uses standard HTTP methods, returns JSON responses, and uses standard HTTP status codes to indicate success or failure.</p>
+                    
+                    <h4 class="mt-4">Available Endpoints</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Resource</th>
+                                <th>Description</th>
+                                <th>Base Path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Students</td>
+                                <td>Manage student information and fingerprint enrollment</td>
+                                <td><code>/api/students</code></td>
+                            </tr>
+                            <tr>
+                                <td>Classes</td>
+                                <td>Manage classes, schedules, and student enrollment</td>
+                                <td><code>/api/classes</code></td>
+                            </tr>
+                            <tr>
+                                <td>Attendance</td>
+                                <td>Record attendance and generate reports</td>
+                                <td><code>/api/attendance</code></td>
+                            </tr>
+                            <tr>
+                                <td>System</td>
+                                <td>Health check and system information</td>
+                                <td><code>/api/health</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="authentication">
+                    <h2>Authentication</h2>
+                    <p>The API currently uses a simple API key-based authentication mechanism for secure access.</p>
+                    
+                    <div class="alert alert-warning" role="alert">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Development Mode</h5>
+                        <p class="mb-0">In the development environment, authentication is optional. For production use, it is strongly recommended to enable authentication to secure your API.</p>
+                    </div>
+                    
+                    <h4 class="mt-4">API Key Authentication</h4>
+                    <p>To authenticate requests, include the API key in the HTTP header:</p>
+                    
+                    <pre><code>X-API-Key: your_api_key_here</code></pre>
+                    
+                    <p>You can generate and manage API keys through the web interface in the Administrator settings.</p>
+                    
+                    <h4 class="mt-4">Authentication for IoT Devices</h4>
+                    <p>For ESP32 and other IoT devices that need to send attendance data, a device-specific API key can be generated that has limited permissions (typically only allowing attendance recording).</p>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="error-handling">
+                    <h2>Error Handling</h2>
+                    <p>The API uses standard HTTP status codes to indicate the success or failure of a request. In case of an error, the response body will contain additional information about the error.</p>
+                    
+                    <h4 class="mt-4">Common HTTP Status Codes</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Status Code</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>200 OK</td>
+                                <td>The request was successful</td>
+                            </tr>
+                            <tr>
+                                <td>201 Created</td>
+                                <td>A new resource was successfully created</td>
+                            </tr>
+                            <tr>
+                                <td>400 Bad Request</td>
+                                <td>The request was invalid or cannot be otherwise served</td>
+                            </tr>
+                            <tr>
+                                <td>401 Unauthorized</td>
+                                <td>Authentication failed or user doesn't have permissions</td>
+                            </tr>
+                            <tr>
+                                <td>404 Not Found</td>
+                                <td>The requested resource does not exist</td>
+                            </tr>
+                            <tr>
+                                <td>409 Conflict</td>
+                                <td>The request conflicts with current state of the server</td>
+                            </tr>
+                            <tr>
+                                <td>422 Unprocessable Entity</td>
+                                <td>The request was well-formed but contains semantic errors</td>
+                            </tr>
+                            <tr>
+                                <td>500 Internal Server Error</td>
+                                <td>An error occurred on the server</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 class="mt-4">Error Response Format</h4>
+                    <p>Error responses have the following format:</p>
+                    
+                    <pre><code>{
+    "detail": "A descriptive error message"
+}</code></pre>
+                    
+                    <p>Example error response for a request to get a non-existent student:</p>
+                    
+                    <div class="response-example">
+                        <p>Status: 404 Not Found</p>
+                        <pre><code>{
+    "detail": "Student with ID abc123 not found"
+}</code></pre>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="students-api">
+                    <h2>Students API</h2>
+                    <p>Endpoints for managing student information and fingerprint enrollment.</p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/students/</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get All Students</h5>
+                            <p class="card-text">Returns a list of all students in the system.</p>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "students": {
+        "student1_id": {
+            "student_id": "student1_id",
+            "name": "John Doe",
+            "fingerprint_id": 1,
+            "enrolled_classes": ["class1_id", "class2_id"]
+        },
+        "student2_id": {
+            "student_id": "student2_id",
+            "name": "Jane Smith",
+            "fingerprint_id": 2,
+            "enrolled_classes": ["class1_id"]
+        }
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/students/{student_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get Student by ID</h5>
+                            <p class="card-text">Returns detailed information about a specific student.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>student_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the student</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "student_id": "student1_id",
+    "name": "John Doe",
+    "fingerprint_id": 1,
+    "enrolled_classes": ["class1_id", "class2_id"]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/students/fingerprint/{fingerprint_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get Student by Fingerprint ID</h5>
+                            <p class="card-text">Returns student information based on the fingerprint ID.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>fingerprint_id</td>
+                                        <td>integer</td>
+                                        <td>The fingerprint ID stored in the sensor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "student_id": "student1_id",
+    "name": "John Doe",
+    "fingerprint_id": 1,
+    "enrolled_classes": ["class1_id", "class2_id"]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-post">POST</span> <span class="endpoint">/api/students/</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Create Student</h5>
+                            <p class="card-text">Creates a new student record in the system.</p>
+                            
+                            <h6 class="mt-3">Request Body</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>name</td>
+                                        <td>string</td>
+                                        <td>The full name of the student</td>
+                                    </tr>
+                                    <tr>
+                                        <td>fingerprint_id</td>
+                                        <td>integer</td>
+                                        <td>The unique fingerprint ID stored in the sensor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Example Request</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "name": "John Doe",
+    "fingerprint_id": 1
+}</code></pre>
+                            </div>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "student_id": "generated_student_id",
+    "message": "Student created successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-put">PUT</span> <span class="endpoint">/api/students/{student_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Update Student</h5>
+                            <p class="card-text">Updates an existing student's information.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>student_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the student</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Request Body</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>name</td>
+                                        <td>string</td>
+                                        <td>The full name of the student</td>
+                                    </tr>
+                                    <tr>
+                                        <td>fingerprint_id</td>
+                                        <td>integer</td>
+                                        <td>The unique fingerprint ID stored in the sensor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Example Request</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "name": "John Smith",
+    "fingerprint_id": 1
+}</code></pre>
+                            </div>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "message": "Student updated successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-delete">DELETE</span> <span class="endpoint">/api/students/{student_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Delete Student</h5>
+                            <p class="card-text">Removes a student from the system.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>student_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the student</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "message": "Student deleted successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="classes-api">
+                    <h2>Classes API</h2>
+                    <p>Endpoints for managing classes, schedules, and student enrollment.</p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/classes/</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get All Classes</h5>
+                            <p class="card-text">Returns a list of all classes in the system.</p>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "classes": {
+        "class1_id": {
+            "class_id": "class1_id",
+            "class_name": "Mathematics 101",
+            "lecturer": "Dr. Smith",
+            "schedules": [
+                {
+                    "day_of_week": "Monday",
+                    "start_time": "09:00",
+                    "end_time": "11:00",
+                    "room_number": "A101"
+                },
+                {
+                    "day_of_week": "Wednesday",
+                    "start_time": "09:00",
+                    "end_time": "11:00",
+                    "room_number": "A101"
+                }
+            ],
+            "enrolled_students": ["student1_id", "student2_id"]
+        },
+        "class2_id": {
+            "class_id": "class2_id",
+            "class_name": "Computer Science 202",
+            "lecturer": "Prof. Johnson",
+            "schedules": [
+                {
+                    "day_of_week": "Tuesday",
+                    "start_time": "13:00",
+                    "end_time": "15:00",
+                    "room_number": "B205"
+                }
+            ],
+            "enrolled_students": ["student1_id"]
+        }
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/classes/{class_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get Class by ID</h5>
+                            <p class="card-text">Returns detailed information about a specific class.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>class_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the class</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "class_id": "class1_id",
+    "class_name": "Mathematics 101",
+    "lecturer": "Dr. Smith",
+    "schedules": [
+        {
+            "day_of_week": "Monday",
+            "start_time": "09:00",
+            "end_time": "11:00",
+            "room_number": "A101"
+        },
+        {
+            "day_of_week": "Wednesday",
+            "start_time": "09:00",
+            "end_time": "11:00",
+            "room_number": "A101"
+        }
+    ],
+    "enrolled_students": ["student1_id", "student2_id"]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-post">POST</span> <span class="endpoint">/api/classes/</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Create Class</h5>
+                            <p class="card-text">Creates a new class in the system.</p>
+                            
+                            <h6 class="mt-3">Request Body</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>class_name</td>
+                                        <td>string</td>
+                                        <td>The name of the class</td>
+                                    </tr>
+                                    <tr>
+                                        <td>lecturer</td>
+                                        <td>string</td>
+                                        <td>The name of the lecturer</td>
+                                    </tr>
+                                    <tr>
+                                        <td>schedules</td>
+                                        <td>array</td>
+                                        <td>Array of schedule objects</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Example Request</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "class_name": "Mathematics 101",
+    "lecturer": "Dr. Smith",
+    "schedules": [
+        {
+            "day_of_week": "Monday",
+            "start_time": "09:00",
+            "end_time": "11:00",
+            "room_number": "A101"
+        },
+        {
+            "day_of_week": "Wednesday",
+            "start_time": "09:00",
+            "end_time": "11:00",
+            "room_number": "A101"
+        }
+    ]
+}</code></pre>
+                            </div>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "class_id": "generated_class_id",
+    "message": "Class created successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-post">POST</span> <span class="endpoint">/api/classes/{class_id}/enroll/{student_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Enroll Student in Class</h5>
+                            <p class="card-text">Enrolls a student in a specific class.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>class_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the class</td>
+                                    </tr>
+                                    <tr>
+                                        <td>student_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the student</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "message": "Student enrolled successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="attendance-api">
+                    <h2>Attendance API</h2>
+                    <p>Endpoints for recording attendance and generating reports.</p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/attendance/record/{fingerprint_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Record Attendance via Fingerprint</h5>
+                            <p class="card-text">Records attendance for a student identified by fingerprint ID.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>fingerprint_id</td>
+                                        <td>integer</td>
+                                        <td>The fingerprint ID stored in the sensor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Query Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Required</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>timestamp</td>
+                                        <td>string</td>
+                                        <td>No</td>
+                                        <td>Custom timestamp (format: 'YYYY-MM-DD HH:MM:SS'). Defaults to current time if not provided.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "attendance_id": "generated_attendance_id",
+    "student_id": "student1_id",
+    "name": "John Doe",
+    "class_id": "class1_id",
+    "class_name": "Mathematics 101",
+    "timestamp": "2023-04-01 09:15:00"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-post">POST</span> <span class="endpoint">/api/attendance/manual</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Record Attendance Manually</h5>
+                            <p class="card-text">Manually records attendance for a student.</p>
+                            
+                            <h6 class="mt-3">Request Body</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>student_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the student</td>
+                                    </tr>
+                                    <tr>
+                                        <td>class_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the class</td>
+                                    </tr>
+                                    <tr>
+                                        <td>timestamp</td>
+                                        <td>string</td>
+                                        <td>Attendance timestamp (format: 'YYYY-MM-DD HH:MM:SS')</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Example Request</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "student_id": "student1_id",
+    "class_id": "class1_id",
+    "timestamp": "2023-04-01 09:15:00"
+}</code></pre>
+                            </div>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "attendance_id": "generated_attendance_id",
+    "message": "Attendance recorded successfully",
+    "student_name": "John Doe",
+    "class_name": "Mathematics 101",
+    "timestamp": "2023-04-01 09:15:00"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/attendance/report/{class_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get Attendance Report for Class</h5>
+                            <p class="card-text">Generates an attendance report for a specific class on a given date.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>class_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the class</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Query Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Required</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>date</td>
+                                        <td>string</td>
+                                        <td>Yes</td>
+                                        <td>Date for the report (format: 'YYYY-MM-DD')</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "class_id": "class1_id",
+    "class_name": "Mathematics 101",
+    "date": "2023-04-01",
+    "total_students": 3,
+    "present_students": 2,
+    "absent_students": 1,
+    "attendance_list": [
+        {
+            "student_id": "student1_id",
+            "name": "John Doe",
+            "status": "present"
+        },
+        {
+            "student_id": "student2_id",
+            "name": "Jane Smith",
+            "status": "present"
+        },
+        {
+            "student_id": "student3_id",
+            "name": "Robert Johnson",
+            "status": "absent"
+        }
+    ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/attendance/student/{student_id}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Get Student Attendance Summary</h5>
+                            <p class="card-text">Generates an attendance summary for a specific student.</p>
+                            
+                            <h6 class="mt-3">Path Parameters</h6>
+                            <table class="table table-bordered table-params">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>student_id</td>
+                                        <td>string</td>
+                                        <td>The unique identifier of the student</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "student_id": "student1_id",
+    "name": "John Doe",
+    "enrolled_classes": 2,
+    "class_attendance": [
+        {
+            "class_id": "class1_id",
+            "class_name": "Mathematics 101",
+            "total_days": 10,
+            "attended_days": 9,
+            "attendance_percentage": 90
+        },
+        {
+            "class_id": "class2_id",
+            "class_name": "Computer Science 202",
+            "total_days": 8,
+            "attended_days": 7,
+            "attendance_percentage": 88
+        }
+    ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="system-api">
+                    <h2>System API</h2>
+                    <p>Endpoints for system health checks and status information.</p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span class="method-get">GET</span> <span class="endpoint">/api/health</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Health Check</h5>
+                            <p class="card-text">Returns the health status of the API and its components.</p>
+                            
+                            <h6 class="mt-3">Response</h6>
+                            <div class="response-example">
+                                <pre><code>{
+    "status": "ok",
+    "timestamp": "2023-04-01 12:34:56",
+    "version": "1.0.0"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="webhook-api">
+                    <h2>Webhooks</h2>
+                    <p>The system supports webhooks for real-time notifications of attendance events.</p>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <h5><i class="bi bi-info-circle me-2"></i>Webhooks Configuration</h5>
+                        <p class="mb-0">Webhooks can be configured in the Administrator settings in the web interface.</p>
+                    </div>
+                    
+                    <h4 class="mt-4">Webhook Events</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Description</th>
+                                <th>Payload Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>attendance.recorded</td>
+                                <td>Triggered when a new attendance record is created</td>
+                                <td>
+                                    <pre><code>{
+    "event": "attendance.recorded",
+    "timestamp": "2023-04-01T09:15:00Z",
+    "data": {
+        "attendance_id": "att123",
+        "student_id": "student1_id",
+        "student_name": "John Doe",
+        "class_id": "class1_id",
+        "class_name": "Mathematics 101",
+        "recorded_at": "2023-04-01T09:15:00Z"
+    }
+}</code></pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>student.created</td>
+                                <td>Triggered when a new student is created</td>
+                                <td>
+                                    <pre><code>{
+    "event": "student.created",
+    "timestamp": "2023-04-01T09:15:00Z",
+    "data": {
+        "student_id": "student1_id",
+        "name": "John Doe",
+        "fingerprint_id": 1
+    }
+}</code></pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>class.created</td>
+                                <td>Triggered when a new class is created</td>
+                                <td>
+                                    <pre><code>{
+    "event": "class.created",
+    "timestamp": "2023-04-01T09:15:00Z",
+    "data": {
+        "class_id": "class1_id",
+        "class_name": "Mathematics 101",
+        "lecturer": "Dr. Smith"
+    }
+}</code></pre>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                
+                <hr class="my-5">
+                
+                <footer class="mt-5 text-center text-muted">
+                    <p>&copy; 2025 Fingerprint Attendance System. All rights reserved.</p>
+                    <p>API Version: 1.0.0</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fingerprint Attendance System Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding-top: 60px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: #333;
+            padding: 0.5rem 1rem;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 3px;
+            padding: 15px;
+        }
+        code {
+            color: #d63384;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .alert-tip {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-fingerprint me-2"></i>Fingerprint Attendance System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Documentation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="api.html">API Reference</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="hardware.html">Hardware Setup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../">Web Interface</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#introduction">
+                                Introduction
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">
+                                Features
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#architecture">
+                                System Architecture
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#setup">
+                                Setup Guide
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#usage">
+                                Usage Instructions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#troubleshooting">
+                                Troubleshooting
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#faq">
+                                FAQ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <section id="introduction">
+                    <h1>Fingerprint Attendance System Documentation</h1>
+                    <p class="lead">A comprehensive IoT-based solution for automating attendance tracking using fingerprint recognition.</p>
+                    
+                    <div class="alert alert-primary" role="alert">
+                        <h4 class="alert-heading">Welcome!</h4>
+                        <p>This documentation will guide you through the setup, configuration, and usage of the Fingerprint Attendance System. Whether you're an administrator, teacher, or technical staff, you'll find all the information you need to get the system up and running effectively.</p>
+                    </div>
+                    
+                    <p>The Fingerprint Attendance System is designed to streamline attendance management in educational institutions and organizations by leveraging biometric technology for accurate identity verification. With this system, you can:</p>
+                    
+                    <ul>
+                        <li>Track student attendance in real-time</li>
+                        <li>Generate comprehensive attendance reports</li>
+                        <li>Manage multiple classes with different schedules</li>
+                        <li>Monitor attendance trends and patterns</li>
+                        <li>Eliminate proxy attendance and manual record-keeping errors</li>
+                    </ul>
+                    
+                    <p>The system consists of hardware (Arduino ESP32 with fingerprint sensor) and software components (Firebase backend and web interface) that work together to provide a seamless attendance tracking experience.</p>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="features">
+                    <h2>Features</h2>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-fingerprint me-2"></i>Biometric Authentication</h4>
+                            <p>Uses fingerprint recognition for secure and accurate identity verification, eliminating the possibility of proxy attendance.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-cloud-upload me-2"></i>Real-time Data Synchronization</h4>
+                            <p>Attendance records are instantly uploaded to the Firebase database, ensuring all stakeholders have access to the latest information.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-calendar-check me-2"></i>Multiple Class Management</h4>
+                            <p>Support for multiple classes with different schedules, allowing the system to automatically determine which class a student is attending based on the time of fingerprint scan.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-file-earmark-text me-2"></i>Comprehensive Reporting</h4>
+                            <p>Generate detailed attendance reports by class, date, or student, with options to export data in various formats.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-people me-2"></i>Student Management</h4>
+                            <p>Easy enrollment and management of students, including assigning them to specific classes and managing their fingerprint data.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-gear me-2"></i>Flexible Configuration</h4>
+                            <p>Adaptable system settings to accommodate different academic schedules, attendance policies, and institutional requirements.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-shield-check me-2"></i>Secure Data Storage</h4>
+                            <p>All data is securely stored in Firebase with proper authentication and authorization controls.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4><i class="bi bi-phone me-2"></i>Responsive Web Interface</h4>
+                            <p>Access the system from any device with a modern web browser, including mobile phones and tablets.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="architecture">
+                    <h2>System Architecture</h2>
+                    
+                    <p>The Fingerprint Attendance System follows a client-server architecture with IoT elements. The system consists of the following components:</p>
+                    
+                    <h4 class="mt-4">Hardware Components</h4>
+                    <ul>
+                        <li><strong>Arduino ESP32:</strong> The main microcontroller that interfaces with the fingerprint sensor and connects to the internet.</li>
+                        <li><strong>Fingerprint Sensor:</strong> Captures and processes fingerprint data for student identification.</li>
+                        <li><strong>Power Supply:</strong> Provides stable power to the system.</li>
+                        <li><strong>Optional Display:</strong> Shows feedback to users during fingerprint scanning.</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">Software Components</h4>
+                    <ul>
+                        <li><strong>Arduino Firmware:</strong> Code running on the ESP32 that manages fingerprint scanning and API communication.</li>
+                        <li><strong>Backend Server:</strong> FastAPI-based server that handles API requests and business logic.</li>
+                        <li><strong>Firebase Database:</strong> Real-time database for storing student, class, and attendance data.</li>
+                        <li><strong>Web Interface:</strong> Browser-based UI for system management and report generation.</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">Data Flow</h4>
+                    <ol>
+                        <li>A student places their finger on the fingerprint sensor.</li>
+                        <li>The fingerprint is captured and processed by the sensor.</li>
+                        <li>The ESP32 compares the fingerprint against stored templates to identify the student.</li>
+                        <li>Upon successful identification, the ESP32 sends the student ID and timestamp to the backend server via API.</li>
+                        <li>The server determines which class the student is attending based on the current time and the student's enrollment.</li>
+                        <li>The attendance record is stored in the Firebase database.</li>
+                        <li>The web interface displays real-time updates of attendance records.</li>
+                    </ol>
+                    
+                    <div class="alert alert-tip mt-4" role="alert">
+                        <h5><i class="bi bi-info-circle me-2"></i>Architecture Diagram</h5>
+                        <p>For a visual representation of the system architecture, please refer to the <a href="hardware.html#diagram">hardware setup page</a>.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="setup">
+                    <h2>Setup Guide</h2>
+                    
+                    <p>Setting up the Fingerprint Attendance System involves both hardware and software configuration. Follow these steps to get started:</p>
+                    
+                    <h4 class="mt-4">Prerequisites</h4>
+                    <ul>
+                        <li>Arduino ESP32 development board</li>
+                        <li>Fingerprint sensor (compatible with Adafruit library)</li>
+                        <li>Jumper wires and breadboard</li>
+                        <li>Power supply (5V)</li>
+                        <li>Computer with Arduino IDE installed</li>
+                        <li>Firebase account</li>
+                        <li>Internet connection</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">Hardware Setup</h4>
+                    <p>For detailed hardware setup instructions, including wiring diagrams and component specifications, please visit the <a href="hardware.html">Hardware Setup page</a>.</p>
+                    
+                    <h4 class="mt-4">Software Setup</h4>
+                    <ol>
+                        <li>
+                            <strong>Firebase Configuration:</strong>
+                            <ul>
+                                <li>Create a new Firebase project at <a href="https://console.firebase.google.com/" target="_blank">https://console.firebase.google.com/</a></li>
+                                <li>Set up a Realtime Database</li>
+                                <li>Generate service account credentials (private key)</li>
+                                <li>Place the credentials file in the <code>firebase_config/</code> directory</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Backend Server:</strong>
+                            <ul>
+                                <li>Clone the repository: <code>git clone https://github.com/your-repo/fingerprint-attendance-system.git</code></li>
+                                <li>Install required Python packages: <code>pip install -r requirements.txt</code></li>
+                                <li>Configure environment variables in <code>.env</code> file</li>
+                                <li>Run the server: <code>python main.py</code></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Arduino Firmware:</strong>
+                            <ul>
+                                <li>Open the Arduino IDE</li>
+                                <li>Install required libraries: Adafruit Fingerprint Sensor, WiFi, HTTPClient</li>
+                                <li>Open the fingerprint_attendance_system.ino sketch</li>
+                                <li>Update WiFi credentials and API endpoint</li>
+                                <li>Upload the sketch to your ESP32</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Initial Configuration:</strong>
+                            <ul>
+                                <li>Access the web interface at <code>http://your-server-address:5000</code></li>
+                                <li>Create classes and schedules</li>
+                                <li>Register students and enroll their fingerprints</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Important Note</h5>
+                        <p>Make sure to secure your Firebase credentials and restrict access to the web interface using proper authentication mechanisms in a production environment.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="usage">
+                    <h2>Usage Instructions</h2>
+                    
+                    <p>Once the system is set up, you can start using it to track attendance. Here's how to use the main features:</p>
+                    
+                    <h4 class="mt-4">Recording Attendance</h4>
+                    <ol>
+                        <li>Students place their finger on the fingerprint sensor.</li>
+                        <li>The system identifies the student and records their attendance for the current class based on the time and schedule.</li>
+                        <li>The student receives visual feedback (through LED or display) indicating successful attendance recording.</li>
+                    </ol>
+                    
+                    <h4 class="mt-4">Managing Classes</h4>
+                    <ol>
+                        <li>Log in to the web interface.</li>
+                        <li>Navigate to the "Classes" section.</li>
+                        <li>Click "Add Class" to create a new class.</li>
+                        <li>Fill in the class details (name, lecturer) and add schedules (day, time, room).</li>
+                        <li>Save the class.</li>
+                    </ol>
+                    
+                    <h4 class="mt-4">Managing Students</h4>
+                    <ol>
+                        <li>Navigate to the "Students" section in the web interface.</li>
+                        <li>Click "Add Student" to register a new student.</li>
+                        <li>Enter the student's name and assign a fingerprint ID.</li>
+                        <li>Enroll the student in one or more classes.</li>
+                        <li>Save the student information.</li>
+                    </ol>
+                    
+                    <h4 class="mt-4">Enrolling Fingerprints</h4>
+                    <ol>
+                        <li>After creating a student record, use the fingerprint enrollment feature.</li>
+                        <li>Follow the prompts to place the student's finger on the sensor multiple times.</li>
+                        <li>The system will store the fingerprint template with the assigned ID.</li>
+                        <li>Verify the enrollment by testing the fingerprint recognition.</li>
+                    </ol>
+                    
+                    <h4 class="mt-4">Generating Reports</h4>
+                    <ol>
+                        <li>Navigate to the "Reports" section in the web interface.</li>
+                        <li>Select the report type (class attendance or student summary).</li>
+                        <li>Choose the class and date (for class reports) or student (for student reports).</li>
+                        <li>Click "Generate Report" to view the attendance data.</li>
+                        <li>Use the export options to download the report in different formats (PDF, CSV).</li>
+                    </ol>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="troubleshooting">
+                    <h2>Troubleshooting</h2>
+                    
+                    <p>If you encounter issues with the Fingerprint Attendance System, check these common problems and solutions:</p>
+                    
+                    <div class="accordion mt-4" id="troubleshootingAccordion">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Fingerprint Sensor Not Detecting
+                                </button>
+                            </h3>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> The fingerprint sensor doesn't respond when a finger is placed on it, or consistently fails to recognize fingerprints.</p>
+                                    <p><strong>Possible Causes and Solutions:</strong></p>
+                                    <ul>
+                                        <li><strong>Incorrect Wiring:</strong> Verify that the sensor is properly connected to the ESP32 according to the wiring diagram.</li>
+                                        <li><strong>Power Issues:</strong> Ensure the sensor is receiving adequate power. Try using an external power supply if necessary.</li>
+                                        <li><strong>Dirty Sensor:</strong> Clean the sensor surface with a soft, lint-free cloth.</li>
+                                        <li><strong>Finger Placement:</strong> Make sure the finger is placed correctly on the sensor, covering the entire sensing area.</li>
+                                        <li><strong>Serial Communication:</strong> Check that the correct serial port and baud rate are configured in the firmware.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    ESP32 Not Connecting to WiFi
+                                </button>
+                            </h3>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> The ESP32 fails to connect to the WiFi network or frequently disconnects.</p>
+                                    <p><strong>Possible Causes and Solutions:</strong></p>
+                                    <ul>
+                                        <li><strong>Incorrect Credentials:</strong> Double-check the WiFi SSID and password in the firmware.</li>
+                                        <li><strong>Signal Strength:</strong> Ensure the ESP32 is within range of the WiFi router. Consider using a WiFi extender if necessary.</li>
+                                        <li><strong>Router Settings:</strong> Verify that the router allows new devices to connect and that MAC filtering is not blocking the ESP32.</li>
+                                        <li><strong>Power Supply:</strong> Ensure the ESP32 has a stable power supply, as WiFi functions require more power than basic operations.</li>
+                                        <li><strong>Reset ESP32:</strong> Try performing a power cycle or reset of the ESP32.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Firebase Connection Issues
+                                </button>
+                            </h3>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> The backend server fails to connect to Firebase, or data is not being stored or retrieved properly.</p>
+                                    <p><strong>Possible Causes and Solutions:</strong></p>
+                                    <ul>
+                                        <li><strong>Invalid Credentials:</strong> Ensure the Firebase credentials file is valid and contains the correct project information.</li>
+                                        <li><strong>Database Rules:</strong> Check the Firebase Realtime Database rules to make sure they allow read and write operations.</li>
+                                        <li><strong>Internet Connection:</strong> Verify that the server has a stable internet connection.</li>
+                                        <li><strong>Environment Variables:</strong> Confirm that the FIREBASE_CREDENTIALS_PATH and FIREBASE_DATABASE_URL environment variables are set correctly.</li>
+                                        <li><strong>Firebase Console:</strong> Check the Firebase console for any error messages or service disruptions.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Attendance Not Being Recorded
+                                </button>
+                            </h3>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> Fingerprints are recognized, but attendance records are not appearing in the system.</p>
+                                    <p><strong>Possible Causes and Solutions:</strong></p>
+                                    <ul>
+                                        <li><strong>API Endpoint:</strong> Verify that the ESP32 is using the correct API endpoint to send attendance data.</li>
+                                        <li><strong>Class Schedule:</strong> Check if the student is enrolled in a class that is currently in session according to the schedule.</li>
+                                        <li><strong>Time Synchronization:</strong> Ensure the system clock is accurate, as attendance is time-dependent.</li>
+                                        <li><strong>Backend Errors:</strong> Check the server logs for any errors in processing attendance records.</li>
+                                        <li><strong>Database Permissions:</strong> Verify that the Firebase database allows writing to the attendance records collection.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingFive">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    Web Interface Not Loading
+                                </button>
+                            </h3>
+                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> The web interface doesn't load or displays errors when accessed.</p>
+                                    <p><strong>Possible Causes and Solutions:</strong></p>
+                                    <ul>
+                                        <li><strong>Server Status:</strong> Check if the backend server is running by verifying the process or visiting the /api/health endpoint.</li>
+                                        <li><strong>Port Configuration:</strong> Ensure the server is running on the expected port (default 5000) and that the port is not blocked by a firewall.</li>
+                                        <li><strong>CORS Settings:</strong> Verify that CORS middleware is properly configured to allow requests from the expected origins.</li>
+                                        <li><strong>Static Files:</strong> Check if static files (HTML, CSS, JS) are being served correctly by the server.</li>
+                                        <li><strong>Browser Issues:</strong> Try clearing browser cache or using a different browser to rule out client-side issues.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="faq">
+                    <h2>Frequently Asked Questions (FAQ)</h2>
+                    
+                    <div class="mt-4">
+                        <h4>How many students can the system handle?</h4>
+                        <p>The system can manage thousands of students, but the fingerprint sensor typically has a limit on the number of fingerprint templates it can store locally (usually 100-1000 depending on the model). In a large implementation, multiple fingerprint sensors can be deployed for different classes or locations.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>Is the fingerprint data secure?</h4>
+                        <p>Yes, the system only stores fingerprint templates (mathematical representations), not actual fingerprint images. These templates cannot be reverse-engineered into actual fingerprints. Additionally, the data is stored securely in the Firebase database with proper authentication and authorization controls.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>Can the system work offline?</h4>
+                        <p>The fingerprint sensor can identify students offline, but to record attendance in the database, an internet connection is required. The system can be configured to store attendance records locally when offline and sync them when the connection is restored.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>How accurate is the fingerprint recognition?</h4>
+                        <p>Modern fingerprint sensors offer high accuracy with false acceptance rates (FAR) below 0.1% and false rejection rates (FRR) around 1-2%. Proper enrollment and consistent finger placement improve accuracy.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>Can the system be integrated with existing school management systems?</h4>
+                        <p>Yes, the system provides APIs that can be used to integrate with other systems. Custom integration modules can be developed to synchronize data with existing school or organization databases.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>What happens if a student forgets to mark attendance?</h4>
+                        <p>Administrators can manually record attendance through the web interface. The system also provides an audit trail of all attendance records, including those entered manually.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>Can the system handle multiple fingerprints per student?</h4>
+                        <p>While it's technically possible to store multiple fingerprints per student, the current implementation associates one fingerprint ID with each student for simplicity. Future versions may support multiple fingerprints per student.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>How is the system powered?</h4>
+                        <p>The ESP32 and fingerprint sensor can be powered via USB, a 5V adapter, or batteries for portable operation. For fixed installations, a stable power supply with backup is recommended to ensure continuous operation.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <footer class="mt-5 text-center text-muted">
+                    <p>&copy; 2025 Fingerprint Attendance System. All rights reserved.</p>
+                    <p>For support, contact: support@fingerprint-attendance.com</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

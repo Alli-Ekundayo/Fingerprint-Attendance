@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Setup - Fingerprint Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding-top: 60px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: #333;
+            padding: 0.5rem 1rem;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 3px;
+            padding: 15px;
+        }
+        code {
+            color: #d63384;
+        }
+        .hardware-img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .alert-tip {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+        table th,
+        table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+        thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-fingerprint me-2"></i>Fingerprint Attendance System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Documentation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="api.html">API Reference</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="hardware.html">Hardware Setup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../">Web Interface</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#components">
+                                Components List
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#diagram">
+                                Wiring Diagram
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#esp32">
+                                ESP32 Setup
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#fingerprint">
+                                Fingerprint Sensor
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#optional">
+                                Optional Components
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#assembly">
+                                Assembly Instructions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#testing">
+                                Testing the Hardware
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#troubleshooting">
+                                Hardware Troubleshooting
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <section id="components">
+                    <h1>Hardware Setup</h1>
+                    <p class="lead">This guide will walk you through the physical components and connections required for the Fingerprint Attendance System.</p>
+                    
+                    <h2 class="mt-5">Components List</h2>
+                    <p>The following components are required to build the Fingerprint Attendance System hardware:</p>
+                    
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Quantity</th>
+                                <th>Description</th>
+                                <th>Estimated Cost (USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ESP32 Development Board</td>
+                                <td>1</td>
+                                <td>Microcontroller with built-in WiFi and Bluetooth capabilities</td>
+                                <td>$8-$15</td>
+                            </tr>
+                            <tr>
+                                <td>Fingerprint Sensor Module</td>
+                                <td>1</td>
+                                <td>Optical fingerprint sensor (R305, AS608, or FPM10A recommended)</td>
+                                <td>$15-$30</td>
+                            </tr>
+                            <tr>
+                                <td>Breadboard</td>
+                                <td>1</td>
+                                <td>For prototyping connections</td>
+                                <td>$3-$5</td>
+                            </tr>
+                            <tr>
+                                <td>Jumper Wires</td>
+                                <td>10+</td>
+                                <td>Male-to-male and male-to-female jumper wires</td>
+                                <td>$2-$5</td>
+                            </tr>
+                            <tr>
+                                <td>Micro USB Cable</td>
+                                <td>1</td>
+                                <td>For powering and programming the ESP32</td>
+                                <td>$2-$5</td>
+                            </tr>
+                            <tr>
+                                <td>5V Power Supply</td>
+                                <td>1</td>
+                                <td>To power the system (can use USB power adapter)</td>
+                                <td>$5-$10</td>
+                            </tr>
+                            <tr>
+                                <td>RGB LED (Optional)</td>
+                                <td>1</td>
+                                <td>For visual feedback on scan status</td>
+                                <td>$1-$2</td>
+                            </tr>
+                            <tr>
+                                <td>Resistors (220Ω) (Optional)</td>
+                                <td>3</td>
+                                <td>For RGB LED if used</td>
+                                <td>$1</td>
+                            </tr>
+                            <tr>
+                                <td>OLED Display (Optional)</td>
+                                <td>1</td>
+                                <td>128x64 I2C OLED for status display</td>
+                                <td>$5-$10</td>
+                            </tr>
+                            <tr>
+                                <td>Project Box/Enclosure</td>
+                                <td>1</td>
+                                <td>To house the components</td>
+                                <td>$5-$15</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3">Total Estimated Cost</th>
+                                <th>$47-$98</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div class="alert alert-tip mt-4" role="alert">
+                        <h5><i class="bi bi-info-circle me-2"></i>Component Recommendation</h5>
+                        <p>For the fingerprint sensor, we recommend the R305 or AS608 model for its reliability and compatibility with the Adafruit Fingerprint library. These sensors have a higher recognition accuracy and can store more fingerprint templates compared to cheaper alternatives.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="diagram">
+                    <h2>Wiring Diagram</h2>
+                    <p>The following diagram shows how to connect the fingerprint sensor and optional components to the ESP32:</p>
+                    
+                    <div class="text-center mt-4">
+                        <!-- Note: In a real implementation, this would be an actual diagram image -->
+                        <img alt="Wiring diagram showing ESP32 connected to fingerprint sensor and optional components" class="hardware-img" src="https://via.placeholder.com/800x600.png?text=Fingerprint+System+Wiring+Diagram">
+                    </div>
+                    
+                    <h4 class="mt-4">Basic Connection Table</h4>
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th>ESP32 Pin</th>
+                                <th>Fingerprint Sensor Pin</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>3.3V</td>
+                                <td>VCC</td>
+                                <td>Power supply (some fingerprint sensors may require 5V instead)</td>
+                            </tr>
+                            <tr>
+                                <td>GND</td>
+                                <td>GND</td>
+                                <td>Ground connection</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 16 (RX2)</td>
+                                <td>TX</td>
+                                <td>Data transmission from sensor to ESP32</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 17 (TX2)</td>
+                                <td>RX</td>
+                                <td>Data transmission from ESP32 to sensor</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 class="mt-4">Optional RGB LED Connection</h4>
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th>ESP32 Pin</th>
+                                <th>RGB LED Pin</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GPIO 25</td>
+                                <td>Red Pin (via 220Ω resistor)</td>
+                                <td>For error indication</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 26</td>
+                                <td>Green Pin (via 220Ω resistor)</td>
+                                <td>For success indication</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 27</td>
+                                <td>Blue Pin (via 220Ω resistor)</td>
+                                <td>For processing indication</td>
+                            </tr>
+                            <tr>
+                                <td>GND</td>
+                                <td>Common Cathode (GND)</td>
+                                <td>For common cathode RGB LED. If using common anode, connect to 3.3V instead.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 class="mt-4">Optional OLED Display Connection</h4>
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th>ESP32 Pin</th>
+                                <th>OLED Display Pin</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>3.3V</td>
+                                <td>VCC</td>
+                                <td>Power supply</td>
+                            </tr>
+                            <tr>
+                                <td>GND</td>
+                                <td>GND</td>
+                                <td>Ground connection</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 21 (SDA)</td>
+                                <td>SDA</td>
+                                <td>I2C data</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 22 (SCL)</td>
+                                <td>SCL</td>
+                                <td>I2C clock</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Important Note</h5>
+                        <p>Some fingerprint sensors operate at 5V, while others can work with 3.3V. Check your specific sensor's datasheet to determine the correct voltage. If your sensor requires 5V but the ESP32's logic is 3.3V, you may need a logic level converter for the TX/RX lines.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="esp32">
+                    <h2>ESP32 Setup</h2>
+                    <p>The ESP32 is the brain of the system, handling fingerprint recognition, WiFi communication, and API interactions.</p>
+                    
+                    <h4 class="mt-4">ESP32 Pin Configuration</h4>
+                    <p>The ESP32 has numerous GPIO pins that can be used for various functions. For the Fingerprint Attendance System, we'll be using the following pins:</p>
+                    
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Pin</th>
+                                <th>Function</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GPIO 16 (RX2)</td>
+                                <td>UART Receive</td>
+                                <td>Receives data from the fingerprint sensor's TX pin</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 17 (TX2)</td>
+                                <td>UART Transmit</td>
+                                <td>Sends data to the fingerprint sensor's RX pin</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 25</td>
+                                <td>Red LED (Optional)</td>
+                                <td>Controls the red component of the RGB LED</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 26</td>
+                                <td>Green LED (Optional)</td>
+                                <td>Controls the green component of the RGB LED</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 27</td>
+                                <td>Blue LED (Optional)</td>
+                                <td>Controls the blue component of the RGB LED</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 21</td>
+                                <td>SDA (Optional)</td>
+                                <td>I2C data line for OLED display</td>
+                            </tr>
+                            <tr>
+                                <td>GPIO 22</td>
+                                <td>SCL (Optional)</td>
+                                <td>I2C clock line for OLED display</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 class="mt-4">ESP32 Development Board Types</h4>
+                    <p>There are several ESP32 development board variants available. The most common ones are:</p>
+                    
+                    <ul>
+                        <li><strong>ESP32 DevKit V1:</strong> Standard development board with plenty of GPIO pins</li>
+                        <li><strong>ESP32-WROOM-32:</strong> Similar to DevKit V1 but with an integrated WROOM-32 module</li>
+                        <li><strong>ESP32-S2/S3:</strong> Newer variants with different specs but compatible with this project</li>
+                        <li><strong>NodeMCU-32S:</strong> Popular board with good pin access and USB connectivity</li>
+                    </ul>
+                    
+                    <p>Any of these ESP32 variants will work for this project, though the pin numbers might vary slightly.</p>
+                    
+                    <div class="alert alert-tip mt-4" role="alert">
+                        <h5><i class="bi bi-info-circle me-2"></i>Power Considerations</h5>
+                        <p>The ESP32 can be powered via USB, but when connected to multiple components (especially a fingerprint sensor), it's recommended to use an external 5V power supply to ensure stable operation. The ESP32 has a built-in voltage regulator to provide 3.3V to its internal circuits.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="fingerprint">
+                    <h2>Fingerprint Sensor</h2>
+                    <p>The fingerprint sensor is the core component that captures and processes fingerprint data for student identification.</p>
+                    
+                    <h4 class="mt-4">Supported Fingerprint Sensor Models</h4>
+                    <p>The following fingerprint sensor models are compatible with the system:</p>
+                    
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Interface</th>
+                                <th>Capacity</th>
+                                <th>Compatibility</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>R305</td>
+                                <td>UART (TTL Serial)</td>
+                                <td>1000 fingerprints</td>
+                                <td>Excellent (Recommended)</td>
+                            </tr>
+                            <tr>
+                                <td>AS608</td>
+                                <td>UART (TTL Serial)</td>
+                                <td>1000 fingerprints</td>
+                                <td>Excellent (Recommended)</td>
+                            </tr>
+                            <tr>
+                                <td>FPM10A</td>
+                                <td>UART (TTL Serial)</td>
+                                <td>1000 fingerprints</td>
+                                <td>Good</td>
+                            </tr>
+                            <tr>
+                                <td>GT-511C3</td>
+                                <td>UART (TTL Serial)</td>
+                                <td>200 fingerprints</td>
+                                <td>Good (requires library adjustment)</td>
+                            </tr>
+                            <tr>
+                                <td>ZFM-20</td>
+                                <td>UART (TTL Serial)</td>
+                                <td>1000 fingerprints</td>
+                                <td>Good</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 class="mt-4">Fingerprint Sensor Pin Configuration</h4>
+                    <p>Most fingerprint sensors have the following pins:</p>
+                    
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th>Pin Name</th>
+                                <th>Function</th>
+                                <th>Connection</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>VCC</td>
+                                <td>Power</td>
+                                <td>Connect to 3.3V or 5V depending on sensor specifications</td>
+                            </tr>
+                            <tr>
+                                <td>GND</td>
+                                <td>Ground</td>
+                                <td>Connect to GND</td>
+                            </tr>
+                            <tr>
+                                <td>TX</td>
+                                <td>Transmit</td>
+                                <td>Connect to ESP32 RX2 (GPIO 16)</td>
+                            </tr>
+                            <tr>
+                                <td>RX</td>
+                                <td>Receive</td>
+                                <td>Connect to ESP32 TX2 (GPIO 17)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Sensor Care</h5>
+                        <p>The fingerprint sensor's optical surface is delicate. Keep it clean and free from dust, oil, and scratches for optimal performance. Clean it regularly with a soft, lint-free cloth. Avoid using liquid cleaners directly on the sensor surface.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="optional">
+                    <h2>Optional Components</h2>
+                    <p>These components enhance the functionality and user experience of the system but are not strictly necessary for basic operation.</p>
+                    
+                    <h4 class="mt-4">RGB LED for Status Indication</h4>
+                    <p>An RGB LED provides visual feedback to users about the status of the fingerprint scanning process:</p>
+                    <ul>
+                        <li><strong>Blue:</strong> System is ready and waiting for a fingerprint</li>
+                        <li><strong>Purple:</strong> Processing fingerprint</li>
+                        <li><strong>Green:</strong> Fingerprint successfully recognized and attendance recorded</li>
+                        <li><strong>Red:</strong> Fingerprint not recognized or error in recording attendance</li>
+                    </ul>
+                    
+                    <p>For each color pin of the RGB LED, you'll need a 220Ω resistor to limit the current and protect the LED.</p>
+                    
+                    <h4 class="mt-4">OLED Display</h4>
+                    <p>A small OLED display (128x64 pixels) can show more detailed information to users, such as:</p>
+                    <ul>
+                        <li>System status and instructions</li>
+                        <li>Student name when identified</li>
+                        <li>Class information when attendance is recorded</li>
+                        <li>Error messages if something goes wrong</li>
+                    </ul>
+                    
+                    <p>Most OLED displays use I2C for communication, which requires just two data pins (SDA and SCL) in addition to power and ground.</p>
+                    
+                    <h4 class="mt-4">Project Enclosure</h4>
+                    <p>An enclosure protects the components and gives the system a finished, professional appearance. Consider the following when selecting or designing an enclosure:</p>
+                    <ul>
+                        <li>Ensure there's an opening for the fingerprint sensor</li>
+                        <li>Include cutouts for the LED and display (if used)</li>
+                        <li>Allow access to the ESP32's USB port for programming and power</li>
+                        <li>Consider ventilation if components generate heat</li>
+                        <li>Make it secure but accessible for maintenance</li>
+                    </ul>
+                    
+                    <div class="alert alert-tip mt-4" role="alert">
+                        <h5><i class="bi bi-info-circle me-2"></i>3D Printing</h5>
+                        <p>If you have access to a 3D printer, you can create a custom enclosure specifically designed for this project. STL files for a suitable enclosure can be found in the project repository.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="assembly">
+                    <h2>Assembly Instructions</h2>
+                    <p>Follow these steps to assemble the Fingerprint Attendance System hardware:</p>
+                    
+                    <ol class="mt-4">
+                        <li>
+                            <h5>Prepare the Components</h5>
+                            <p>Gather all the components and ensure you have the necessary tools:</p>
+                            <ul>
+                                <li>ESP32 development board</li>
+                                <li>Fingerprint sensor</li>
+                                <li>Breadboard and jumper wires</li>
+                                <li>Optional components (RGB LED, OLED display)</li>
+                                <li>Soldering iron and solder (if creating a permanent setup)</li>
+                                <li>Wire cutters and strippers</li>
+                            </ul>
+                        </li>
+                        
+                        <li class="mt-3">
+                            <h5>Connect the Fingerprint Sensor</h5>
+                            <p>Connect the fingerprint sensor to the ESP32 using the breadboard and jumper wires:</p>
+                            <ul>
+                                <li>Connect VCC to 3.3V or 5V on the ESP32 (check sensor requirements)</li>
+                                <li>Connect GND to GND on the ESP32</li>
+                                <li>Connect TX on the sensor to RX2 (GPIO 16) on the ESP32</li>
+                                <li>Connect RX on the sensor to TX2 (GPIO 17) on the ESP32</li>
+                            </ul>
+                        </li>
+                        
+                        <li class="mt-3">
+                            <h5>Add the RGB LED (Optional)</h5>
+                            <p>If using an RGB LED for status indication:</p>
+                            <ul>
+                                <li>Connect the red pin through a 220Ω resistor to GPIO 25</li>
+                                <li>Connect the green pin through a 220Ω resistor to GPIO 26</li>
+                                <li>Connect the blue pin through a 220Ω resistor to GPIO 27</li>
+                                <li>Connect the common pin (cathode or anode) to GND or 3.3V respectively</li>
+                            </ul>
+                        </li>
+                        
+                        <li class="mt-3">
+                            <h5>Connect the OLED Display (Optional)</h5>
+                            <p>If using an OLED display:</p>
+                            <ul>
+                                <li>Connect VCC to 3.3V on the ESP32</li>
+                                <li>Connect GND to GND on the ESP32</li>
+                                <li>Connect SDA to GPIO 21 on the ESP32</li>
+                                <li>Connect SCL to GPIO 22 on the ESP32</li>
+                            </ul>
+                        </li>
+                        
+                        <li class="mt-3">
+                            <h5>Test the Connections</h5>
+                            <p>Before finalizing the assembly, test the connections by uploading a simple test sketch to the ESP32 that verifies each component is working correctly.</p>
+                        </li>
+                        
+                        <li class="mt-3">
+                            <h5>Install in Enclosure</h5>
+                            <p>Once you've verified everything works:</p>
+                            <ul>
+                                <li>Transfer the components from the breadboard to a more permanent setup if desired (PCB or perfboard)</li>
+                                <li>Install all components in the enclosure</li>
+                                <li>Ensure the fingerprint sensor is accessible through an opening</li>
+                                <li>Secure all components to prevent movement</li>
+                                <li>Add labels if necessary for user guidance</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    
+                    <div class="alert alert-tip mt-4" role="alert">
+                        <h5><i class="bi bi-info-circle me-2"></i>Prototype First</h5>
+                        <p>It's recommended to build a prototype on a breadboard first, test everything thoroughly, and then transfer to a more permanent setup. This makes troubleshooting easier and prevents wasting materials.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="testing">
+                    <h2>Testing the Hardware</h2>
+                    <p>After assembling the hardware, follow these steps to test the system:</p>
+                    
+                    <h4 class="mt-4">Basic Connectivity Test</h4>
+                    <ol>
+                        <li>Connect the ESP32 to your computer via USB</li>
+                        <li>Open the Arduino IDE and select the correct board and port</li>
+                        <li>Upload a simple "blink" sketch to verify the ESP32 is functioning</li>
+                    </ol>
+                    
+                    <pre><code>void setup() {
+  pinMode(2, OUTPUT);  // Built-in LED on most ESP32 boards
+}
+
+void loop() {
+  digitalWrite(2, HIGH);
+  delay(1000);
+  digitalWrite(2, LOW);
+  delay(1000);
+}</code></pre>
+                    
+                    <h4 class="mt-4">Fingerprint Sensor Test</h4>
+                    <p>Use the Adafruit Fingerprint sensor library to test basic functionality:</p>
+                    
+                    <ol>
+                        <li>Install the Adafruit Fingerprint Sensor library in Arduino IDE</li>
+                        <li>Open the "fingerprint" example sketch from the library</li>
+                        <li>Modify the serial port to use GPIO 16/17 (Serial2)</li>
+                        <li>Upload the sketch and open the Serial Monitor</li>
+                        <li>Follow the instructions to enroll and verify a fingerprint</li>
+                    </ol>
+                    
+                    <h4 class="mt-4">WiFi Connectivity Test</h4>
+                    <p>Test the ESP32's ability to connect to WiFi:</p>
+                    
+                    <pre><code>#include &lt;WiFi.h&gt;
+
+const char* ssid = "YourWiFiSSID";
+const char* password = "YourWiFiPassword";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  // Your code here
+}</code></pre>
+                    
+                    <h4 class="mt-4">Full System Test</h4>
+                    <p>Finally, upload the complete firmware to test the entire system:</p>
+                    
+                    <ol>
+                        <li>Open the fingerprint_attendance_system.ino sketch</li>
+                        <li>Configure WiFi credentials and API endpoint</li>
+                        <li>Upload the sketch to the ESP32</li>
+                        <li>Test the fingerprint enrollment and verification</li>
+                        <li>Verify that attendance records are being sent to the backend server</li>
+                    </ol>
+                    
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Check Serial Output</h5>
+                        <p>During testing, keep the Serial Monitor open at 115200 baud rate to view debug information and error messages that can help identify and resolve issues.</p>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <section id="troubleshooting">
+                    <h2>Hardware Troubleshooting</h2>
+                    <p>If you encounter issues with the hardware, check these common problems and solutions:</p>
+                    
+                    <div class="accordion mt-4" id="troubleshootingAccordion">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    ESP32 Won't Upload Sketches
+                                </button>
+                            </h3>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> Unable to upload sketches to the ESP32, receiving errors in Arduino IDE.</p>
+                                    <p><strong>Solutions:</strong></p>
+                                    <ul>
+                                        <li>Ensure you've selected the correct board and port in Arduino IDE</li>
+                                        <li>Try pressing and holding the BOOT button while uploading</li>
+                                        <li>Check USB cable - some cables are power-only and don't support data</li>
+                                        <li>Install or update ESP32 board definitions in Arduino IDE</li>
+                                        <li>Check if drivers are installed for the USB-to-Serial chip on your ESP32 board</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Fingerprint Sensor Not Responding
+                                </button>
+                            </h3>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> No response from the fingerprint sensor, errors in serial communication.</p>
+                                    <p><strong>Solutions:</strong></p>
+                                    <ul>
+                                        <li>Double-check TX/RX connections - they should be crossed (TX to RX, RX to TX)</li>
+                                        <li>Verify power supply - make sure the sensor is receiving the correct voltage</li>
+                                        <li>Try a different baud rate - some sensors use 57600 instead of 9600</li>
+                                        <li>Check if your sensor requires a logic level converter between ESP32 (3.3V) and the sensor (5V)</li>
+                                        <li>Try a simpler test sketch that just initializes the sensor</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    ESP32 Keeps Resetting
+                                </button>
+                            </h3>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> The ESP32 keeps restarting or behaving erratically.</p>
+                                    <p><strong>Solutions:</strong></p>
+                                    <ul>
+                                        <li>Check power supply - ESP32 needs a stable 5V supply, especially when connected to peripherals</li>
+                                        <li>Add a large capacitor (100-470μF) between VIN and GND to stabilize power</li>
+                                        <li>Look for short circuits in your wiring</li>
+                                        <li>Check if code is causing a watchdog timer reset (add more yield() or delay() calls)</li>
+                                        <li>Reduce WiFi power consumption if running on battery</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Poor Fingerprint Recognition
+                                </button>
+                            </h3>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> Fingerprints are not recognized reliably or with low confidence scores.</p>
+                                    <p><strong>Solutions:</strong></p>
+                                    <ul>
+                                        <li>Clean the sensor surface with a soft, lint-free cloth</li>
+                                        <li>Ensure fingers are clean and not too dry or too moist</li>
+                                        <li>Adjust the confidence threshold in your code if it's set too high</li>
+                                        <li>During enrollment, capture multiple images of the same finger from different angles</li>
+                                        <li>Some fingerprint sensors perform better than others - consider upgrading if necessary</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingFive">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    WiFi Connection Issues
+                                </button>
+                            </h3>
+                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Symptoms:</strong> ESP32 fails to connect to WiFi or connection is unstable.</p>
+                                    <p><strong>Solutions:</strong></p>
+                                    <ul>
+                                        <li>Verify WiFi credentials (SSID and password) are correct</li>
+                                        <li>Check WiFi signal strength at the device location</li>
+                                        <li>Keep the ESP32 away from metal objects or sources of interference</li>
+                                        <li>Add retry logic for WiFi connections in your code</li>
+                                        <li>Consider using a WiFi extender if the signal is weak</li>
+                                        <li>Use a static IP address if DHCP causes issues</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <hr class="my-5">
+                
+                <footer class="mt-5 text-center text-muted">
+                    <p>&copy; 2025 Fingerprint Attendance System. All rights reserved.</p>
+                    <p>For hardware support, contact: hardware-support@fingerprint-attendance.com</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
