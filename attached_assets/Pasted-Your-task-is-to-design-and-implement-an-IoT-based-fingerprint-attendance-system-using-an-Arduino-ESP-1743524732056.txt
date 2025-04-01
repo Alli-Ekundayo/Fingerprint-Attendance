@@ -1,0 +1,69 @@
+Your task is to design and implement an IoT-based fingerprint attendance system using an Arduino ESP32. The project involves hardware integration, backend development, and programming the ESP32 to interact with Firebase. Below are the detailed requirements:
+
+System Overview:
+
+Objective: Create a system that uses a fingerprint sensor to record attendance. The ESP32 should process fingerprint data and communicate attendance records to a Firebase backend.
+
+Components: Arduino ESP32, fingerprint sensor (e.g., R305 or equivalent), WiFi connectivity, and Firebase for the backend database.
+
+Hardware Integration:
+
+Circuit Design: Develop a wiring diagram that connects the fingerprint sensor to the Arduino ESP32. Clearly indicate all necessary connections, including power supply, data lines (TX/RX), and any required resistors or additional components.
+
+Component Specifications: List the model numbers and technical specifications for the ESP32 and fingerprint sensor, ensuring compatibility and reliable communication.
+
+Arduino Programming:
+
+Fingerprint Enrollment and Verification: Write Arduino code to:
+
+Enroll new fingerprints and store templates in the sensor’s memory.
+
+Verify a scanned fingerprint against stored templates.
+
+WiFi Communication: Implement code that connects the ESP32 to a WiFi network.
+
+Firebase Integration: Develop routines to:
+
+Format and send attendance data (user ID, timestamp, status) to Firebase.
+
+Handle errors in communication and retry failed transmissions.
+
+Code Quality: Ensure that the Arduino code is modular, well-commented, and follows best practices for embedded programming.
+
+Backend Development (Firebase):
+
+Database Setup: Configure a Firebase project and set up a real-time database (or Firestore) to store attendance records.
+
+Data Structure: Design a clear data schema that records user identification, timestamps, and fingerprint verification status.
+
+Security and Authentication: Implement Firebase security rules to protect the data. Optionally, add user authentication if the system requires secure access.
+
+API Integration: Ensure that the ESP32 code properly formats data for Firebase and handles API responses, including error handling.
+
+Documentation:
+
+Step-by-Step Guide: Provide comprehensive documentation that explains the hardware setup, wiring diagram, software installation, and configuration of both the Arduino code and the Firebase backend.
+
+Troubleshooting Tips: Include common issues and debugging tips for both hardware and software integration.
+
+Testing and Validation:
+
+Test Cases: Outline test cases to verify:
+
+Correct fingerprint enrollment and matching.
+
+Reliable WiFi connection and data transmission.
+
+Integrity and security of data stored in Firebase.
+
+Debug Logging: Include mechanisms in the Arduino code for logging key events, errors, and status messages to facilitate troubleshooting.
+
+Your final deliverable should include:
+
+A complete wiring diagram and hardware list.
+
+The full Arduino code with detailed inline comments.
+
+Firebase setup instructions including database rules and schema.
+
+A detailed project report/documentation covering design decisions, test cases, and troubleshooting steps.
