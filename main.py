@@ -9,6 +9,10 @@ import json
 from datetime import datetime
 import threading
 
+# Set environment variables for simulation mode
+os.environ['FIREBASE_SIMULATION'] = 'true'
+os.environ['FIREBASE_DATABASE_URL'] = 'https://fingerprint-attendance-dummy.firebaseio.com'
+
 # Import routes
 from routes import class_routes, student_routes, attendance_routes
 
@@ -33,7 +37,16 @@ app.include_router(class_routes.router)
 app.include_router(student_routes.router)
 app.include_router(attendance_routes.router)
 
-# Serve static files (if any)
+# Serve static files
+# Create web_interface directories for CSS and JS if they don't exist
+os.makedirs("web_interface/css", exist_ok=True)
+os.makedirs("web_interface/js", exist_ok=True)
+
+# Mount web_interface directories
+app.mount("/css", StaticFiles(directory="web_interface/css"), name="css")
+app.mount("/js", StaticFiles(directory="web_interface/js"), name="js")
+
+# Mount static directory if it exists (for other static assets)
 if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
 

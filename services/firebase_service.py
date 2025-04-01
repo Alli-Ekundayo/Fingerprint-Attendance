@@ -24,31 +24,50 @@ class FirebaseService:
         if not firebase_admin._apps:
             cred_path = os.environ.get('FIREBASE_CREDENTIALS_PATH', 'firebase_config/credentials.json')
             database_url = os.environ.get('FIREBASE_DATABASE_URL', None)
+            simulation_mode = os.environ.get('FIREBASE_SIMULATION', 'false').lower() == 'true'
             
             # Log initialization details
             print(f"Initializing Firebase with credentials from: {cred_path}")
             print(f"Database URL: {database_url}")
+            print(f"Simulation mode: {simulation_mode}")
             
-            # Check if credentials file exists
-            if os.path.exists(cred_path):
+            # Use simulation mode (no actual Firebase connection)
+            if simulation_mode:
+                # Create a dummy app configuration with database URL
+                if not database_url:
+                    database_url = "https://fingerprint-attendance-dummy.firebaseio.com"
+                
+                try:
+                    firebase_admin.initialize_app(options={
+                        'databaseURL': database_url,
+                        'projectId': 'fingerprint-attendance-system'
+                    })
+                    print("Firebase initialized in simulation mode")
+                except Exception as e:
+                    print(f"Error initializing Firebase in simulation mode: {str(e)}")
+            # Try to use real credentials
+            elif os.path.exists(cred_path) and database_url:
                 try:
                     cred = credentials.Certificate(cred_path)
-                    if database_url:
-                        firebase_admin.initialize_app(cred, {
-                            'databaseURL': database_url
-                        })
-                    else:
-                        firebase_admin.initialize_app(cred)
+                    firebase_admin.initialize_app(cred, {
+                        'databaseURL': database_url
+                    })
                     print("Firebase initialized successfully with credentials file")
                 except Exception as e:
                     print(f"Error initializing Firebase with credentials: {str(e)}")
-                    # Initialize without credentials for demo purposes
-                    firebase_admin.initialize_app()
-                    print("Firebase initialized without credentials for demo purposes")
+                    # Fallback to simulation with dummy URL
+                    firebase_admin.initialize_app(options={
+                        'databaseURL': "https://fingerprint-attendance-dummy.firebaseio.com",
+                        'projectId': 'fingerprint-attendance-system'
+                    })
+                    print("Firebase initialized in fallback simulation mode")
             else:
-                # Initialize without credentials for demo purposes
-                firebase_admin.initialize_app()
-                print("Firebase initialized without credentials (file not found)")
+                # Initialize with dummy URL for demo purposes
+                firebase_admin.initialize_app(options={
+                    'databaseURL': "https://fingerprint-attendance-dummy.firebaseio.com",
+                    'projectId': 'fingerprint-attendance-system'
+                })
+                print("Firebase initialized with dummy URL (no credentials found)")
     
     def get_reference(self, path: str):
         """Get a reference to a specific path in the database"""

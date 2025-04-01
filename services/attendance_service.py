@@ -1,6 +1,7 @@
 from typing import Dict, Any, Optional, List, Tuple
 from datetime import datetime
 import pytz
+import os
 
 from services.firebase_service import FirebaseService
 from utils.time_util import get_current_time, get_day_of_week, time_in_range, format_datetime
@@ -11,6 +12,16 @@ class AttendanceService:
     def __init__(self):
         """Initialize the attendance service"""
         self.firebase_service = FirebaseService()
+        
+        # Initialize optional local data service if we're in simulation mode
+        self.local_service = None
+        if os.environ.get('FIREBASE_SIMULATION', 'false').lower() == 'true':
+            try:
+                from services.local_data_service import LocalDataService
+                self.local_service = LocalDataService()
+                print("AttendanceService: Using local data service as backup")
+            except Exception as e:
+                print(f"AttendanceService: Error initializing local data service: {str(e)}")
     
     def record_attendance(self, fingerprint_id: int, timestamp: str = None) -> Dict[str, Any]:
         """
@@ -20,9 +31,14 @@ class AttendanceService:
         # Get student by fingerprint ID
         student = self.firebase_service.get_student_by_fingerprint(fingerprint_id)
         
+        # Try local service as fallback if we're in simulation mode
+        if not student and self.local_service:
+            print(f"Using local service to find student with fingerprint ID: {fingerprint_id}")
+            student = self.local_service.get_student_by_fingerprint(fingerprint_id)
+        
         if not student:
             return {"error": f"No student found with fingerprint ID: {fingerprint_id}"}
-        
+            
         # Use provided timestamp or current time
         if timestamp is None:
             current_time = get_current_time()
