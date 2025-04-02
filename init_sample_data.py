@@ -20,9 +20,8 @@ print(f"Initializing Firebase with project ID: {project_id}")
 
 # Use simulation mode or fallback to always work
 try:
-    firebase_admin.initialize_app(options={
-        'projectId': project_id
-    })
+    cred = credentials.Certificate(cred_path)
+    firebase_admin.initialize_app(cred)
     print("Firebase initialized in sample data mode")
 except Exception as e:
     print(f"Error initializing Firebase: {str(e)}")
