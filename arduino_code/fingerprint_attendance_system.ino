@@ -38,7 +38,7 @@ void setupFingerprint();
 void setupLED();
 void setupDisplay();
 bool checkConnection();
-void setLED(uint8_t r, uint8_t g, uint8_t b);
+void setLED(uint8_t r, uint8_t g, uint8_t b);   v mre 
 void displayMessage(const String& line1, const String& line2 = "", const String& line3 = "");
 int getFingerprintID();
 int enrollFingerprint();
@@ -46,7 +46,7 @@ bool sendAttendanceData(int fingerprintId);
 
 void setup() {
   // Initialize serial communication
-  Serial.begin(115200);
+  Serial.begin(115200); 
   while (!Serial);  // For Leonardo/Micro/Zero
   
   Serial.println("\n\nFingerprint Attendance System");
