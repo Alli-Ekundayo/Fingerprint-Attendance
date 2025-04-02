@@ -12,6 +12,44 @@ try:
 except ImportError:
     print("Adafruit fingerprint library not available, using simulation mode")
     FINGERPRINT_LIBRARY_AVAILABLE = False
+    # Create a stub for the constants to avoid errors
+    class AdafruitFingerprintStub:
+        OK = 0
+        
+        # Additional stub methods and attributes for simulation mode
+        class FingerprintStub:
+            def __init__(self):
+                self.finger_id = 0
+                self.confidence = 0
+                self.template_count = 0
+                self.model_id = 0
+            
+            def get_image(self):
+                return AdafruitFingerprintStub.OK
+                
+            def image_2_tz(self, slot):
+                return AdafruitFingerprintStub.OK
+                
+            def finger_search(self):
+                return AdafruitFingerprintStub.OK
+                
+            def create_model(self):
+                return AdafruitFingerprintStub.OK
+                
+            def store(self):
+                return AdafruitFingerprintStub.OK
+                
+            def delete_model(self, model_id):
+                return AdafruitFingerprintStub.OK
+                
+            def read_templates(self):
+                return AdafruitFingerprintStub.OK
+        
+        @staticmethod
+        def Adafruit_Fingerprint(serial_conn):
+            return AdafruitFingerprintStub.FingerprintStub()
+            
+    adafruit_fingerprint = AdafruitFingerprintStub()
 
 class FingerprintUtil:
     """Utility for interacting with the fingerprint sensor via serial connection"""
@@ -296,3 +334,114 @@ class FingerprintUtil:
         print(f"Simulated fingerprint enrolled with ID {new_id}")
         
         return True
+        
+    def delete_fingerprint(self, fingerprint_id: int) -> bool:
+        """
+        Delete a fingerprint template from the sensor
+        Returns True if deletion was successful, otherwise False
+        """
+        if self.simulation_mode:
+            # Simulate deletion
+            if fingerprint_id in self.simulated_fingerprints:
+                del self.simulated_fingerprints[fingerprint_id]
+                print(f"Simulated fingerprint with ID {fingerprint_id} deleted")
+                return True
+            else:
+                print(f"Simulated fingerprint with ID {fingerprint_id} not found")
+                return False
+                
+        # Real implementation with hardware
+        if not self.ser or not self.fingerprint:
+            if not self.connect():
+                return False
+                
+        try:
+            if FINGERPRINT_LIBRARY_AVAILABLE:
+                # Delete the template
+                if self.fingerprint.delete_model(fingerprint_id) == adafruit_fingerprint.OK:
+                    print(f"Fingerprint with ID {fingerprint_id} deleted successfully")
+                    return True
+                else:
+                    print(f"Failed to delete fingerprint with ID {fingerprint_id}")
+                    return False
+            else:
+                print("Fingerprint library not available")
+                return False
+        except Exception as e:
+            print(f"Error deleting fingerprint: {str(e)}")
+            return False
+            
+    def get_template_count(self) -> int:
+        """
+        Get the number of fingerprint templates stored in the sensor
+        """
+        if self.simulation_mode:
+            # Return count of simulated fingerprints
+            count = len(self.simulated_fingerprints)
+            print(f"Simulated fingerprint template count: {count}")
+            return count
+            
+        # Real implementation with hardware
+        if not self.ser or not self.fingerprint:
+            if not self.connect():
+                return 0
+                
+        try:
+            if FINGERPRINT_LIBRARY_AVAILABLE:
+                # Read the template count
+                if self.fingerprint.read_templates() == adafruit_fingerprint.OK:
+                    count = self.fingerprint.template_count
+                    print(f"Fingerprint template count: {count}")
+                    return count
+                else:
+                    print("Failed to read template count")
+                    return 0
+            else:
+                print("Fingerprint library not available")
+                return 0
+        except Exception as e:
+            print(f"Error reading template count: {str(e)}")
+            return 0
+            
+    def is_connected(self) -> bool:
+        """
+        Check if the fingerprint sensor is connected and operational
+        """
+        if self.simulation_mode:
+            return True
+            
+        # Try to connect if not already connected
+        if not self.ser or not self.fingerprint:
+            return self.connect()
+            
+        try:
+            # Test connection by reading templates
+            if FINGERPRINT_LIBRARY_AVAILABLE:
+                return self.fingerprint.read_templates() == adafruit_fingerprint.OK
+            return False
+        except Exception:
+            return False
+            
+    def get_sensor_type(self) -> str:
+        """
+        Get information about the fingerprint sensor type
+        """
+        if self.simulation_mode:
+            return "Simulated Fingerprint Sensor"
+            
+        if not self.ser or not self.fingerprint:
+            if not self.connect():
+                return "Unknown (not connected)"
+        
+        try:
+            # In a real implementation, we would query the sensor for its type/model
+            # Since we're using a stub in many cases, we'll return a generic response
+            if FINGERPRINT_LIBRARY_AVAILABLE:
+                # Try to get sensor information - this is implementation specific
+                # For Adafruit sensors, we can return the sensor type with some details
+                return f"Adafruit Fingerprint Sensor (Baud: {self.baud_rate}, Port: {self.port or 'unknown'})"
+            else:
+                return "Unknown (library not available)"
+        except Exception as e:
+            print(f"Error getting sensor type: {str(e)}")
+            return f"Unknown (error: {str(e)})"

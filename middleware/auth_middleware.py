@@ -19,21 +19,32 @@ logger = logging.getLogger(__name__)
 # Initialize Firebase Admin SDK if not already initialized
 if not firebase_admin._apps:
     try:
-        # Try to load Firebase credentials
+        # Get configuration from environment variables
         cred_path = os.environ.get('FIREBASE_CREDENTIALS_PATH', 'firebase_config/credentials.json')
-        if os.path.exists(cred_path):
+        project_id = os.environ.get('FIREBASE_PROJECT_ID', 'fingerprint-attendance-system')
+        simulation_mode = os.environ.get('FIREBASE_SIMULATION', 'false').lower() == 'true'
+        
+        logger.info(f"Initializing Firebase with Project ID: {project_id}, Simulation mode: {simulation_mode}")
+        
+        if simulation_mode:
+            # Initialize without credentials in simulation mode
+            firebase_admin.initialize_app(options={
+                'projectId': project_id
+            })
+            logger.info(f"Firebase Admin SDK initialized in simulation mode with project ID: {project_id}")
+        elif os.path.exists(cred_path):
+            # Initialize with credentials file
             cred = credentials.Certificate(cred_path)
-            if 'FIREBASE_DATABASE_URL' in os.environ:
-                firebase_admin.initialize_app(cred, {
-                    'databaseURL': os.environ.get('FIREBASE_DATABASE_URL')
-                })
-            else:
-                firebase_admin.initialize_app(cred)
-            logger.info("Firebase Admin SDK initialized with credentials")
+            firebase_admin.initialize_app(cred, {
+                'projectId': project_id
+            })
+            logger.info(f"Firebase Admin SDK initialized with credentials from {cred_path}")
         else:
-            # Use the application default credentials for testing/development
-            firebase_admin.initialize_app()
-            logger.warning("Firebase Admin SDK initialized without credentials")
+            # Initialize without credentials for demo/development purposes
+            firebase_admin.initialize_app(options={
+                'projectId': project_id
+            })
+            logger.info(f"Firebase Admin SDK initialized with default project ID: {project_id}")
     except Exception as e:
         logger.error(f"Error initializing Firebase Admin SDK: {str(e)}")
         # Don't fail completely, just log the error
@@ -41,6 +52,7 @@ if not firebase_admin._apps:
             firebase_admin.initialize_app(options={
                 'projectId': 'fingerprint-attendance-system'
             })
+            logger.warning("Firebase Admin SDK initialized with fallback configuration")
 
 # HTTP Bearer token setup for FastAPI
 security = HTTPBearer()

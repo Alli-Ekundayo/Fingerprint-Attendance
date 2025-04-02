@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fingerprint Attendance System</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/fingerprint-management.css">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -62,6 +63,7 @@
                 <li><a href="#" data-page="students" class="nav-link">Students</a></li>
                 <li><a href="#" data-page="attendance" class="nav-link">Attendance</a></li>
                 <li><a href="#" data-page="reports" class="nav-link">Reports</a></li>
+                <li><a href="#" data-page="fingerprints" class="nav-link">Fingerprint Management</a></li>
             </ul>
         </nav>
 
@@ -254,21 +256,71 @@
                     <div id="report-content"></div>
                 </div>
             </section>
+            
+            <!-- Fingerprint Management Section -->
+            <section id="fingerprints" class="page-section">
+                <h2>Fingerprint Management</h2>
+                <p>This interface allows you to remotely manage fingerprint enrollment and removal from the fingerprint sensor.</p>
+                
+                <!-- Sensor Status -->
+                <div id="fingerprint-status" class="fingerprint-container">
+                    <div class="sensor-status">
+                        <h3>Fingerprint Sensor Status</h3>
+                        <p>Checking sensor status...</p>
+                    </div>
+                </div>
+                
+                <!-- Fingerprint Management Interface -->
+                <div id="fingerprint-management-section" class="fingerprint-management-section">
+                    <!-- Enrollment Card -->
+                    <div class="fingerprint-card">
+                        <h3>Enroll Fingerprint</h3>
+                        <p>Enroll a new fingerprint for a student.</p>
+                        
+                        <form id="fingerprint-enroll-form">
+                            <div class="form-group">
+                                <label for="student-id">Select Student:</label>
+                                <select id="student-id" required>
+                                    <option value="">Select Student</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn primary">Enroll Fingerprint</button>
+                            </div>
+                        </form>
+                        
+                        <div id="enrollment-status"></div>
+                    </div>
+                    
+                    <!-- Removal Card -->
+                    <div class="fingerprint-card">
+                        <h3>Remove Fingerprint</h3>
+                        <p>Remove a fingerprint from the system.</p>
+                        
+                        <form id="fingerprint-remove-form">
+                            <div class="form-group">
+                                <label for="fingerprint-id">Select Fingerprint:</label>
+                                <select id="fingerprint-id" required>
+                                    <option value="">Select Fingerprint ID</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn danger">Remove Fingerprint</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
     <script src="/js/auth.js"></script>
     <script src="/js/app.js"></script>
-    <script>
-        // Polyfill for authenticatedFetch until we have the auth.js file working
-        async function authenticatedFetch(url, options = {}) {
-            return fetch(url, options);
-        }
-    </script>
+    <script src="/js/fingerprint-management.js"></script>
     <script>
         // Initialize UI when document is ready
         document.addEventListener('DOMContentLoaded', function() {
-            // Skip authentication for demo mode
+            // Skip authentication for demo mode in development
             // initializeAuth();
             
             // Show app directly in demo mode
@@ -279,7 +331,25 @@
             initNavigation();
             initFormHandlers();
             loadDashboardData();
+            
+            // Initialize fingerprint management interface
+            // Use demo token for simulation mode
+            const demoToken = "demo-token-for-development";
+            initFingerprintManagement(demoToken);
         });
+        
+        // Authentication-aware fetch function
+        async function authenticatedFetch(url, options = {}) {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const token = await user.getIdToken();
+                options.headers = {
+                    ...options.headers,
+                    'Authorization': `Bearer ${token}`
+                };
+            }
+            return fetch(url, options);
+        }
     </script>
 </body>
 </html>

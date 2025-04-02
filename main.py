@@ -14,8 +14,12 @@ from pathlib import Path
 # Load environment variables from .env file
 dotenv.load_dotenv()
 
+# Print Firebase configuration for debugging
+print(f"Firebase Project ID: {os.environ.get('FIREBASE_PROJECT_ID', 'Not set')}")
+print(f"Firebase Simulation Mode: {os.environ.get('FIREBASE_SIMULATION', 'false')}")
+
 # Import routes
-from routes import class_routes, student_routes, attendance_routes
+from routes import class_routes, student_routes, attendance_routes, fingerprint_routes
 
 # Create FastAPI application
 app = FastAPI(
@@ -37,6 +41,7 @@ app.add_middleware(
 app.include_router(class_routes.router)
 app.include_router(student_routes.router)
 app.include_router(attendance_routes.router)
+app.include_router(fingerprint_routes.router)
 
 # Serve static files
 # Create web_interface directories for CSS and JS if they don't exist
@@ -139,4 +144,4 @@ if __name__ == "__main__":
     
     # Run the FastAPI application
     port = int(os.environ.get("PORT", 5000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=port)

@@ -14,6 +14,13 @@ function initializeAuth() {
             
             // Load initial data
             loadDashboardData();
+            
+            // Initialize fingerprint management with user's token
+            user.getIdToken().then(token => {
+                if (typeof initFingerprintManagement === 'function') {
+                    initFingerprintManagement(token);
+                }
+            });
         } else {
             // User is signed out
             console.log("User is signed out");

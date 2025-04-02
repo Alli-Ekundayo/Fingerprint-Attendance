@@ -1,11 +1,11 @@
 """
 Sample data initializer for Fingerprint Attendance System
 
-This script creates sample classes and students in the Firebase database.
+This script creates sample classes and students in the Firebase Cloud Firestore database.
 """
 
 import firebase_admin
-from firebase_admin import credentials, db
+from firebase_admin import credentials, firestore
 import uuid
 import json
 import os
@@ -13,30 +13,31 @@ from datetime import datetime, timedelta
 
 # Initialize Firebase
 cred_path = os.environ.get('FIREBASE_CREDENTIALS_PATH', 'firebase_config/credentials.json')
-database_url = os.environ.get('FIREBASE_DATABASE_URL', 'https://fingerprint-attendance-dummy.firebaseio.com')
+project_id = os.environ.get('FIREBASE_PROJECT_ID', 'fingerprint-attendance-system')
 simulation_mode = os.environ.get('FIREBASE_SIMULATION', 'false').lower() == 'true'
 
-print(f"Initializing Firebase with database URL: {database_url}")
+print(f"Initializing Firebase with project ID: {project_id}")
 
 # Use simulation mode or fallback to always work
 try:
     firebase_admin.initialize_app(options={
-        'databaseURL': database_url,
-        'projectId': 'fingerprint-attendance-system'
+        'projectId': project_id
     })
     print("Firebase initialized in sample data mode")
 except Exception as e:
     print(f"Error initializing Firebase: {str(e)}")
-    # Try with a different URL as fallback
+    # Try with a different project ID as fallback
     try:
         firebase_admin.initialize_app(options={
-            'databaseURL': 'https://fingerprint-attendance-dummy.firebaseio.com',
             'projectId': 'fingerprint-attendance-system'
         })
-        print("Firebase initialized with fallback URL")
+        print("Firebase initialized with fallback project ID")
     except Exception as e:
         print(f"Fatal error initializing Firebase: {str(e)}")
         exit(1)
+
+# Initialize Firestore client
+db = firestore.client()
 
 # Sample classes data
 SAMPLE_CLASSES = [
@@ -121,12 +122,12 @@ SAMPLE_STUDENTS = [
 ]
 
 def create_sample_data():
-    """Create sample classes and students in the database"""
+    """Create sample classes and students in Firestore"""
     class_refs = {}
     student_refs = {}
     
     # Create classes
-    classes_ref = db.reference('classes')
+    classes_collection = db.collection('classes')
     print("Creating sample classes...")
     
     for class_data in SAMPLE_CLASSES:
@@ -134,12 +135,13 @@ def create_sample_data():
         class_data['class_id'] = class_id
         class_data['enrolled_students'] = []
         
-        classes_ref.child(class_id).set(class_data)
+        # Add document to Firestore
+        classes_collection.document(class_id).set(class_data)
         class_refs[class_data['class_name']] = class_id
         print(f"Created class: {class_data['class_name']} with ID: {class_id}")
     
     # Create students
-    students_ref = db.reference('students')
+    students_collection = db.collection('students')
     print("\nCreating sample students...")
     
     for student_data in SAMPLE_STUDENTS:
@@ -147,7 +149,8 @@ def create_sample_data():
         student_data['student_id'] = student_id
         student_data['enrolled_classes'] = []
         
-        students_ref.child(student_id).set(student_data)
+        # Add document to Firestore
+        students_collection.document(student_id).set(student_data)
         student_refs[student_data['name']] = student_id
         print(f"Created student: {student_data['name']} with ID: {student_id}")
     
@@ -158,18 +161,22 @@ def create_sample_data():
     math_class_id = class_refs.get("Mathematics 101")
     for student_name, student_id in student_refs.items():
         # Update student's enrolled classes
-        student_ref = students_ref.child(student_id)
-        student_data = student_ref.get()
+        student_doc = students_collection.document(student_id).get()
+        student_data = student_doc.to_dict()
         enrolled_classes = student_data.get('enrolled_classes', [])
         enrolled_classes.append(math_class_id)
-        student_ref.update({'enrolled_classes': enrolled_classes})
+        students_collection.document(student_id).update({
+            'enrolled_classes': enrolled_classes
+        })
         
         # Update class's enrolled students
-        class_ref = classes_ref.child(math_class_id)
-        class_data = class_ref.get()
+        class_doc = classes_collection.document(math_class_id).get()
+        class_data = class_doc.to_dict()
         enrolled_students = class_data.get('enrolled_students', [])
         enrolled_students.append(student_id)
-        class_ref.update({'enrolled_students': enrolled_students})
+        classes_collection.document(math_class_id).update({
+            'enrolled_students': enrolled_students
+        })
         
         print(f"Enrolled {student_name} in Mathematics 101")
     
@@ -182,18 +189,22 @@ def create_sample_data():
             continue
             
         # Update student's enrolled classes
-        student_ref = students_ref.child(student_id)
-        student_data = student_ref.get()
+        student_doc = students_collection.document(student_id).get()
+        student_data = student_doc.to_dict()
         enrolled_classes = student_data.get('enrolled_classes', [])
         enrolled_classes.append(cs_class_id)
-        student_ref.update({'enrolled_classes': enrolled_classes})
+        students_collection.document(student_id).update({
+            'enrolled_classes': enrolled_classes
+        })
         
         # Update class's enrolled students
-        class_ref = classes_ref.child(cs_class_id)
-        class_data = class_ref.get()
+        class_doc = classes_collection.document(cs_class_id).get()
+        class_data = class_doc.to_dict()
         enrolled_students = class_data.get('enrolled_students', [])
         enrolled_students.append(student_id)
-        class_ref.update({'enrolled_students': enrolled_students})
+        classes_collection.document(cs_class_id).update({
+            'enrolled_students': enrolled_students
+        })
         
         print(f"Enrolled {student_name} in Computer Science 202")
     
@@ -206,18 +217,22 @@ def create_sample_data():
             continue
             
         # Update student's enrolled classes
-        student_ref = students_ref.child(student_id)
-        student_data = student_ref.get()
+        student_doc = students_collection.document(student_id).get()
+        student_data = student_doc.to_dict()
         enrolled_classes = student_data.get('enrolled_classes', [])
         enrolled_classes.append(physics_class_id)
-        student_ref.update({'enrolled_classes': enrolled_classes})
+        students_collection.document(student_id).update({
+            'enrolled_classes': enrolled_classes
+        })
         
         # Update class's enrolled students
-        class_ref = classes_ref.child(physics_class_id)
-        class_data = class_ref.get()
+        class_doc = classes_collection.document(physics_class_id).get()
+        class_data = class_doc.to_dict()
         enrolled_students = class_data.get('enrolled_students', [])
         enrolled_students.append(student_id)
-        class_ref.update({'enrolled_students': enrolled_students})
+        classes_collection.document(physics_class_id).update({
+            'enrolled_students': enrolled_students
+        })
         
         print(f"Enrolled {student_name} in Physics 120")
     
@@ -229,7 +244,7 @@ def create_sample_data():
     yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
     
     # Record attendance for Mathematics 101 yesterday
-    attendance_ref = db.reference(f'attendance/{math_class_id}/{yesterday}')
+    attendance_collection = db.collection('attendance')
     math_students = student_refs.items()  # All students are in Math class
     
     for student_name, student_id in math_students:
@@ -237,20 +252,21 @@ def create_sample_data():
         timestamp = f"{yesterday} 09:15:00"
         
         # Record attendance
+        attendance_id = str(uuid.uuid4())
         attendance_data = {
-            "attendance_id": str(uuid.uuid4()),
+            "attendance_id": attendance_id,
             "student_id": student_id,
             "class_id": math_class_id,
             "timestamp": timestamp,
             "status": "present"
         }
         
-        attendance_ref.child(student_id).set(attendance_data)
+        # Create a document ID combining class, date and student
+        document_id = f"{math_class_id}_{yesterday}_{student_id}"
+        attendance_collection.document(document_id).set(attendance_data)
         print(f"Recorded attendance for {student_name} in Mathematics 101 on {yesterday}")
     
     # Record attendance for Computer Science 202 today
-    attendance_ref = db.reference(f'attendance/{cs_class_id}/{today}')
-    
     for student_name in cs_students:
         student_id = student_refs.get(student_name)
         if not student_id:
@@ -260,15 +276,18 @@ def create_sample_data():
         timestamp = f"{today} 13:10:00"
         
         # Record attendance
+        attendance_id = str(uuid.uuid4())
         attendance_data = {
-            "attendance_id": str(uuid.uuid4()),
+            "attendance_id": attendance_id,
             "student_id": student_id,
             "class_id": cs_class_id,
             "timestamp": timestamp,
             "status": "present"
         }
         
-        attendance_ref.child(student_id).set(attendance_data)
+        # Create a document ID combining class, date and student
+        document_id = f"{cs_class_id}_{today}_{student_id}"
+        attendance_collection.document(document_id).set(attendance_data)
         print(f"Recorded attendance for {student_name} in Computer Science 202 on {today}")
     
     print("\nSample data created successfully!")
