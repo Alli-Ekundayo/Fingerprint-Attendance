@@ -1,33 +1,10 @@
-/*
- * Fingerprint Attendance System
- * 
- * This sketch connects an ESP32 with a fingerprint sensor to the attendance system backend.
- * It allows for fingerprint enrollment and identification, sending attendance data to the server.
- * 
- * Hardware Requirements:
- * - ESP32 Development Board
- * - Fingerprint Sensor (R305/AS608/FPM10A)
- * - Optional: RGB LED for status indication
- * - Optional: OLED Display (I2C, 128x64)
- * 
- * Library Dependencies:
- * - Adafruit Fingerprint Sensor Library
- * - WiFi
- * - HTTPClient
- * - ArduinoJson
- * - Optional: Adafruit SSD1306 (for OLED display)
- * - Optional: Adafruit GFX Library (for OLED display)
- */
-
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <Adafruit_Fingerprint.h>
-
-// Optional Libraries - Uncomment if using these components
-// #include <Wire.h>
-// #include <Adafruit_GFX.h>
-// #include <Adafruit_SSD1306.h>
+#include <Wire.h>
+ #include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 // WiFi Configuration
 const char* ssid = "YourWiFiSSID";
@@ -46,13 +23,6 @@ const String apiKey = "your-api-key"; // Optional, if you've configured authenti
 #define LED_GREEN_PIN 26
 #define LED_BLUE_PIN  27
 
-// Optional OLED Display (uncomment if using)
-// #define SCREEN_WIDTH 128
-// #define SCREEN_HEIGHT 64
-// #define OLED_RESET    -1
-// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-// Initialize fingerprint sensor
 // Use hardware serial for ESP32 (alternative is software serial for Arduino)
 HardwareSerial fingerprintSerial(2);  // UART2 on ESP32
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&fingerprintSerial);
